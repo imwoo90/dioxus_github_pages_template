@@ -3,13 +3,14 @@
 [web.app]
 
 # HTML title tag content
-title = "my_blog"
+title = "Rust's Horizon - A Developer's Blog"
 
 # include `assets` in web platform
 [web.resource]
 
 # Additional CSS style files
-style = []
+# Point to the OUTPUT file that tailwind will generate, not the source.
+style = ["/assets/main.css"]
 
 # Additional JavaScript files
 script = []

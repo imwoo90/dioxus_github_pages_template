@@ -1,18 +1,19 @@
-//! The views module contains the components for all Layouts and Routes for our app. Each layout and route in our [`Route`]
-//! enum will render one of these components.
-//!
-//!
-//! The [`Home`] and [`Blog`] components will be rendered when the current route is [`Route::Home`] or [`Route::Blog`] respectively.
-//!
-//!
-//! The [`Navbar`] component will be rendered on all pages of our app since every page is under the layout. The layout defines
-//! a common wrapper around all child routes.
+pub mod about;
+pub mod blog;
+pub mod contact;
+pub mod footer;
+pub mod home;
+pub mod navbar;
+pub mod not_found;
+pub mod projects;
+pub mod wasm_project;
 
-mod home;
+pub use about::About;
+pub use blog::{BlogList, BlogPost};
+pub use contact::Contact;
+pub use footer::Footer;
 pub use home::Home;
-
-mod blog;
-pub use blog::Blog;
-
-mod navbar;
 pub use navbar::Navbar;
+pub use not_found::NotFound;
+pub use projects::Projects;
+pub use wasm_project::WasmProject;
