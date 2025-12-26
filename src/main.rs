@@ -37,8 +37,7 @@ enum Route {
 }
 
 const FAVICON: Asset = asset!("/assets/favicon.ico");
-// We point to the processed tailwind file or the source if using the CLI watcher separately
-const MAIN_CSS: Asset = asset!("/assets/main.css");
+const MAIN_CSS: Asset = asset!("/tailwind.css");
 
 fn main() {
     dioxus::launch(App);

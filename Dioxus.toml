@@ -9,8 +9,7 @@ title = "Rust's Horizon - A Developer's Blog"
 [web.resource]
 
 # Additional CSS style files
-# Point to the OUTPUT file that tailwind will generate, not the source.
-style = ["/assets/main.css"]
+style = []
 
 # Additional JavaScript files
 script = []
