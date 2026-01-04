@@ -35,17 +35,30 @@ jobs:
           # 1. 빌드 결과물 이동
           mv docs/public/* docs/
           
-          # 2. 테마 감지 스크립트 주입 (구분자로 _ 사용)
-          # JS의 &&가 sed에서 엉뚱하게 치환되지 않도록 \&\&로 처리했습니다.
-          THEME_SCRIPT='<script>(function(){try{var t=localStorage.getItem("theme");if(t==="dark"||(!t\&\&window.matchMedia("(prefers-color-scheme: dark)").matches))document.documentElement.classList.add("dark")}catch(e){}})();</script>'
-          sed -i "s_<head>_<head>$THEME_SCRIPT_" docs/index.html
+          # 2. 파이썬을 이용한 안전한 HTML 수정
+          python3 - <<EOF
+          import os
+          import shutil
 
-          # 3. 로딩 UI 주입 (구분자로 _ 사용)
-          LOADING_UI='<div id="main"><style>body{margin:0;display:flex;justify-content:center;align-items:center;height:100vh;background:#fff;transition:background 0.2s}.dark body{background:#030609}.s{width:32px;height:32px;border:3px solid rgba(59,130,246,0.1);border-top-color:#3b82f6;border-radius:50%;animation:spin 0.8s linear infinite}.dark .s{border-color:rgba(59,130,246,0.2);border-top-color:#60a5fa}@keyframes spin{to{transform:rotate(360deg)}}</style><div class="s"></div></div>'
-          sed -i "s_<div id=\"main\"></div>_$LOADING_UI_" docs/index.html
+          theme_script = '<script>(function(){try{var t=localStorage.getItem("theme");if(t==="dark"||(!t&&window.matchMedia("(prefers-color-scheme: dark)").matches))document.documentElement.classList.add("dark")}catch(e){}})();</script>'
+          loading_ui = '<div id="main"><style>body{margin:0;display:flex;justify-content:center;align-items:center;height:100vh;background:#fff;transition:background 0.2s}.dark body{background:#030609}.s{width:32px;height:32px;border:3px solid rgba(59,130,246,0.1);border-top-color:#3b82f6;border-radius:50%;animation:spin 0.8s linear infinite}.dark .s{border-color:rgba(59,130,246,0.2);border-top-color:#60a5fa}@keyframes spin{to{transform:rotate(360deg)}}</style><div class="s"></div></div>'
 
-          # 4. 404.html 생성
-          cp docs/index.html docs/404.html
+          index_path = "docs/index.html"
+          if os.path.exists(index_path):
+              with open(index_path, "r", encoding="utf-8") as f:
+                  content = f.read()
+              
+              # 헤드에 테마 스크립트 주입
+              content = content.replace("<head>", "<head>" + theme_script)
+              # 메인 div에 로딩 UI 주입
+              content = content.replace('<div id="main"></div>', loading_ui)
+              
+              with open(index_path, "w", encoding="utf-8") as f:
+                  f.write(content)
+                  
+              # 404.html 생성
+              shutil.copy(index_path, "docs/404.html")
+          EOF
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
