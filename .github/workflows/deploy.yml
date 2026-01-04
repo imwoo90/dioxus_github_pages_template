@@ -33,7 +33,7 @@ jobs:
       - name: Post Build Adjustments
         run: |
           # Ensure 404.html is at the root for GitHub Pages routing
-          cp target/dx/my_blog/release/web/public/assets/404.html target/dx/my_blog/release/web/public/404.html
+          cp assets/404.html target/dx/my_blog/release/web/public/404.html
           # Disable Jekyll to ensure files starting with underscore are loaded
           touch target/dx/my_blog/release/web/public/.nojekyll
 
