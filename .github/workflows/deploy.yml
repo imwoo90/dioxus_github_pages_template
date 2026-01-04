@@ -34,7 +34,18 @@ jobs:
         run: |
           # Move static content from docs/public to docs as per official guide
           mv docs/public/* docs/
-          # Copy index.html to 404.html to handle client-side routing
+          
+          # 1. Inject Theme Detection Script to prevent FOUC (Flash of Unstyled Content)
+          # This script runs instantly before the page renders, applying 'dark' class if needed.
+          THEME_SCRIPT='<script>(function(){try{var t=localStorage.getItem("theme");if(t==="dark"||(!t\&\&window.matchMedia("(prefers-color-scheme: dark)").matches))document.documentElement.classList.add("dark")}catch(e){}})();</script>'
+          sed -i "s|<head>|<head>$THEME_SCRIPT|" docs/index.html
+
+          # 2. Inject Premium Loading UI
+          # This is visible only while WASM is loading and initializing.
+          LOADING_UI='<div id="main"><style>body{margin:0;display:flex;justify-content:center;align-items:center;height:100vh;background:#fff;transition:background 0.2s}.dark body{background:#030609}.s{width:32px;height:32px;border:3px solid rgba(59,130,246,0.1);border-top-color:#3b82f6;border-radius:50%;animation:spin 0.8s linear infinite}.dark .s{border-color:rgba(59,130,246,0.2);border-top-color:#60a5fa}@keyframes spin{to{transform:rotate(360deg)}}</style><div class="s"></div></div>'
+          sed -i "s|<div id=\"main\"></div>|$LOADING_UI|" docs/index.html
+
+          # 3. Create 404.html from the optimized index.html
           cp docs/index.html docs/404.html
 
       - name: Deploy to GitHub Pages
