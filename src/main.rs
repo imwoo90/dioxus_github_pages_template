@@ -7,29 +7,30 @@ mod views;
 #[derive(Debug, Clone, Routable, PartialEq)]
 #[rustfmt::skip]
 enum Route {
-    #[layout(Navbar)]
-        #[route("/")]
-        Home {},
+    #[nest("/my_blog")]
+        #[layout(Navbar)]
+            #[route("/")]
+            Home {},
 
-        #[route("/blog")]
-        BlogList {},
+            #[route("/blog")]
+            BlogList {},
 
-        #[route("/blog/:id")]
-        BlogPost { id: String },
+            #[route("/blog/:id")]
+            BlogPost { id: String },
 
-        #[route("/projects")]
-        Projects {},
+            #[route("/projects")]
+            Projects {},
 
-        #[route("/projects/wasm")]
-        WasmProject {},
+            #[route("/projects/wasm")]
+            WasmProject {},
 
-        #[route("/about")]
-        About {},
+            #[route("/about")]
+            About {},
 
-        #[route("/contact")]
-        Contact {},
-
-    #[end_layout]
+            #[route("/contact")]
+            Contact {},
+        #[end_layout]
+    #[end_nest]
 
     #[route("/:..segments")]
     NotFound { segments: Vec<String> },
