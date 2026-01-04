@@ -26,60 +26,43 @@ pub fn About() -> Element {
                 }
                 Section { class: "grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 px-4",
                     div { class: "flex flex-col gap-4",
-                        h2 { class: "text-text-dark dark:text-white text-3xl font-bold leading-tight tracking-[-0.015em] border-b border-text-dark/10 dark:border-white/10 pb-3 transition-colors",
-                            "My Philosophy"
-                        }
+                        SectionTitle { title: "My Philosophy" }
                         p { class: "text-base font-normal leading-relaxed text-text-dark/80 dark:text-[#D4D4D4] transition-colors",
                             "The \"Rust-for-everything\" philosophy isn't just a technical preference; it's a commitment to quality. It means applying the principles of memory safety, zero-cost abstractions, and fearless concurrency to every layer of the stack. This approach minimizes bugs, maximizes performance, and creates software that is a pleasure to maintain and extend, whether it's firmware for a tiny IoT device or a high-traffic web service."
                         }
                     }
                     div { class: "flex flex-col gap-4",
-                        h2 { class: "text-text-dark dark:text-white text-3xl font-bold leading-tight tracking-[-0.015em] border-b border-text-dark/10 dark:border-white/10 pb-3 transition-colors",
-                            "Core Skills"
-                        }
+                        SectionTitle { title: "Core Skills" }
                         div { class: "flex flex-wrap gap-3",
                             for skill in ["Embedded Rust", "Bare-Metal Firmware", "RTOS Integration", "WebAssembly (WASM)", "Async Rust (Tokio)", "Backend APIs (axum)", "Cross-Platform Mobile", "CI/CD & DevOps", "Linux Systems"] {
-                                span { class: "text-sm font-mono bg-text-dark/5 dark:bg-gray-700/50 text-text-dark/70 dark:text-gray-300 px-3 py-1.5 rounded-lg transition-colors", "{skill}" }
+                                Badge { text: skill.to_string() }
                             }
                         }
                     }
                 }
                 Section { class: "flex flex-col gap-8 px-4 mb-20",
-                    h2 { class: "text-text-dark dark:text-white text-3xl font-bold leading-tight tracking-[-0.015em] border-b border-text-dark/10 dark:border-white/10 pb-3 transition-colors",
-                        "My Journey"
-                    }
+                    SectionTitle { title: "My Journey" }
                     div { class: "relative pl-6 border-l-2 border-primary-light/30",
-                        div { class: "mb-10 ml-4",
-                            div { class: "absolute w-4 h-4 bg-primary-light rounded-full mt-1.5 -left-2.5 border border-background-light dark:border-background-dark" }
-                            time { class: "mb-1 text-sm font-normal leading-none text-text-dark/40 dark:text-gray-400 transition-colors", "2022 - Present" }
-                            h3 { class: "text-lg font-semibold text-text-dark dark:text-white transition-colors", "Lead Embedded Engineer, Innovatech Dynamics" }
-                            p { class: "text-base font-normal text-text-dark/70 dark:text-[#D4D4D4] transition-colors",
-                                "Architected and developed a new generation of IoT devices, migrating the entire firmware from C to Rust. Achieved a 40% reduction in memory usage and eliminated a whole class of memory corruption bugs."
-                            }
+                        TimelineItem {
+                            date: "2022 - Present",
+                            title: "Lead Embedded Engineer, Innovatech Dynamics",
+                            description: "Architected and developed a new generation of IoT devices, migrating the entire firmware from C to Rust. Achieved a 40% reduction in memory usage and eliminated a whole class of memory corruption bugs."
                         }
-                        div { class: "mb-10 ml-4",
-                            div { class: "absolute w-4 h-4 bg-primary-light rounded-full mt-1.5 -left-2.5 border border-background-light dark:border-background-dark" }
-                            time { class: "mb-1 text-sm font-normal leading-none text-text-dark/40 dark:text-gray-400 transition-colors", "2020 - 2022" }
-                            h3 { class: "text-lg font-semibold text-text-dark dark:text-white transition-colors", "Full-Stack Developer, QuantumLeap Solutions" }
-                            p { class: "text-base font-normal text-text-dark/70 dark:text-[#D4D4D4] transition-colors",
-                                "Built high-performance backend services in Rust and explored its potential for frontend development using WebAssembly, creating interactive data visualization tools that ran entirely in the browser."
-                            }
+                        TimelineItem {
+                            date: "2020 - 2022",
+                            title: "Full-Stack Developer, QuantumLeap Solutions",
+                            description: "Built high-performance backend services in Rust and explored its potential for frontend development using WebAssembly, creating interactive data visualization tools that ran entirely in the browser."
                         }
-                        div { class: "mb-10 ml-4",
-                            div { class: "absolute w-4 h-4 bg-primary-light rounded-full mt-1.5 -left-2.5 border border-background-light dark:border-background-dark" }
-                            time { class: "mb-1 text-sm font-normal leading-none text-text-dark/40 dark:text-gray-400 transition-colors", "2018" }
-                            h3 { class: "text-lg font-semibold text-text-dark dark:text-white transition-colors", "The Spark: Discovering Rust" }
-                            p { class: "text-base font-normal text-text-dark/70 dark:text-[#D4D4D4] transition-colors",
-                                "While working on a complex C++ project, I discovered Rust. Its promise of safety without sacrificing performance was a revelation that set the course for my entire career."
-                            }
+                        TimelineItem {
+                            date: "2018",
+                            title: "The Spark: Discovering Rust",
+                            description: "While working on a complex C++ project, I discovered Rust. Its promise of safety without sacrificing performance was a revelation that set the course for my entire career."
                         }
-                        div { class: "ml-4",
-                            div { class: "absolute w-4 h-4 bg-primary-light rounded-full mt-1.5 -left-2.5 border border-background-light dark:border-background-dark" }
-                            time { class: "mb-1 text-sm font-normal leading-none text-text-dark/40 dark:text-gray-400 transition-colors", "2016 - 2018" }
-                            h3 { class: "text-lg font-semibold text-text-dark dark:text-white transition-colors", "Firmware Engineer, Core Systems Inc." }
-                            p { class: "text-base font-normal text-text-dark/70 dark:text-[#D4D4D4] transition-colors",
-                                "My professional journey began here, writing C and C++ for industrial control systems. It was here I learned the criticality of robust, reliable code in resource-constrained environments."
-                            }
+                        TimelineItem {
+                            date: "2016 - 2018",
+                            title: "Firmware Engineer, Core Systems Inc.",
+                            description: "My professional journey began here, writing C and C++ for industrial control systems. It was here I learned the criticality of robust, reliable code in resource-constrained environments.",
+                            is_last: true
                         }
                     }
                 }

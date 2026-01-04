@@ -18,9 +18,7 @@ pub fn Home() -> Element {
                 }
 
                 Section {
-                    h2 { class: "text-white text-3xl font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-5 border-b border-white/10",
-                        "Latest Articles"
-                    }
+                    SectionTitle { title: "Latest Articles" }
 
                     div { class: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8",
                         Card {
@@ -47,17 +45,14 @@ pub fn Home() -> Element {
                     }
                 }
 
-                section { class: "flex flex-col items-center text-center gap-4 bg-white/5 p-8 sm:p-12 rounded-lg",
-                    h2 { class: "text-white text-3xl font-bold leading-tight tracking-[-0.015em]",
-                        "Let's Build Together"
-                    }
-                    p { class: "text-[#D4D4D4] text-base font-normal leading-normal max-w-2xl",
+                section { class: "flex flex-col items-center text-center gap-6 bg-white/5 p-8 sm:p-12 rounded-lg transition-colors border border-white/5",
+                    SectionTitle { title: "Let's Build Together" }
+                    p { class: "text-text-dark/80 dark:text-[#D4D4D4] text-base font-normal leading-normal max-w-2xl",
                         "I'm passionate about tackling challenging projects with Rust. If you're looking for a developer with deep experience in embedded systems, performance optimization, and cross-platform development, let's talk."
                     }
-                    Link {
+                    PrimaryButton {
                         to: Route::Contact {},
-                        class: "text-primary-light text-lg font-medium hover:underline",
-                        "contact@rustshorizon.com"
+                        text: "Get in Touch"
                     }
                 }
             }

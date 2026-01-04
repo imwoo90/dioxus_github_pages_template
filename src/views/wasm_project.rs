@@ -2,6 +2,7 @@ use crate::components::*;
 use crate::Route;
 use dioxus::prelude::*;
 
+#[allow(non_snake_case)]
 #[component]
 pub fn WasmProject() -> Element {
     use_effect(move || {
@@ -110,14 +111,19 @@ pub fn calculate_average(data: &[DataPoint]) -> f64 {{
                 }
                 section { class: "border-t border-text-dark/10 dark:border-white/10 pt-12 mb-20 px-4 transition-colors",
                     div { class: "flex flex-col gap-8",
-                        h2 { class: "text-text-dark dark:text-white text-3xl font-bold transition-colors", "Comments (2)" }
+                        SectionTitle { title: "Comments (2)" }
                         div { class: "flex flex-col gap-6",
                             div { class: "flex items-start gap-4",
                                 img { class: "size-10 rounded-full border border-text-dark/10 dark:border-white/10", src: "https://lh3.googleusercontent.com/aida-public/AB6AXuAXB_uuet1wxQCv_HNA5OKhsrKNttI8Dk57pwThxYJLYpDEhDatb8_4amKO5dJoR4O8HAHGGn8jVpIVajTVY8eCPjeKRM5t_Aggqg9fArFKgIVqXzO8ZDcbE0u4pVmB7Bjtsv-wrwcbyaJ9EoGIkN3o6xZiUODixQ5gTySSUTNdK82w6pgxS0-z0DqPuQlZN3SIDAKTZ9mDWrNRfKjvDn87afEIg7cFXg0Fi82r1O1F1jh0GPPhHK6RRionBitolD-t_x3Duw-DtzHw", alt: "User avatar" }
                                 div { class: "flex-1",
                                     form {
                                         onsubmit: |e| e.prevent_default(),
-                                        textarea { class: "w-full bg-white dark:bg-white/5 border border-text-dark/10 dark:border-white/10 rounded-xl p-4 text-text-dark dark:text-white placeholder:text-text-dark/30 dark:placeholder:text-gray-500 focus:ring-primary focus:border-primary transition-all shadow-sm", placeholder: "Add a comment...", rows: "4" }
+                                        TextArea {
+                                            label: None,
+                                            id: "wasm-comment",
+                                            placeholder: "Add a comment...",
+                                            rows: 4
+                                        }
                                         div { class: "mt-4 flex justify-end",
                                             PrimaryButton {
                                                 text: "Post Comment"

@@ -159,3 +159,102 @@ pub fn PrimaryButton(
         }
     }
 }
+
+#[component]
+pub fn Input(
+    label: Option<String>,
+    id: String,
+    placeholder: String,
+    r#type: Option<String>,
+    oninput: Option<EventHandler<FormEvent>>,
+) -> Element {
+    let input_type = r#type.unwrap_or_else(|| "text".to_string());
+    rsx! {
+        div { class: "flex flex-col gap-2 w-full",
+            if let Some(l) = label {
+                label {
+                    class: "text-sm font-medium text-text-dark/60 dark:text-[#D4D4D4] transition-colors",
+                    r#for: "{id}",
+                    "{l}"
+                }
+            }
+            input {
+                class: "w-full bg-white dark:bg-background-dark border border-text-dark/10 dark:border-white/20 rounded-md h-11 px-4 text-base text-text-dark dark:text-white placeholder:text-text-dark/30 dark:placeholder:text-gray-500 focus:ring-primary-light focus:border-primary-light transition-all",
+                id: "{id}",
+                placeholder: "{placeholder}",
+                r#type: "{input_type}",
+                oninput: move |e| {
+                    if let Some(handler) = oninput {
+                        handler.call(e);
+                    }
+                }
+            }
+        }
+    }
+}
+
+#[component]
+pub fn TextArea(
+    label: Option<String>,
+    id: String,
+    placeholder: String,
+    rows: Option<usize>,
+    oninput: Option<EventHandler<FormEvent>>,
+) -> Element {
+    let rows_count = rows.unwrap_or(6);
+    rsx! {
+        div { class: "flex flex-col gap-2 w-full",
+            if let Some(l) = label {
+                label {
+                    class: "text-sm font-medium text-text-dark/60 dark:text-[#D4D4D4] transition-colors",
+                    r#for: "{id}",
+                    "{l}"
+                }
+            }
+            textarea {
+                class: "w-full bg-white dark:bg-background-dark border border-text-dark/10 dark:border-white/20 rounded-md p-4 text-base text-text-dark dark:text-white placeholder:text-text-dark/30 dark:placeholder:text-gray-500 focus:ring-primary-light focus:border-primary-light transition-all",
+                id: "{id}",
+                placeholder: "{placeholder}",
+                rows: "{rows_count}",
+                oninput: move |e| {
+                    if let Some(handler) = oninput {
+                        handler.call(e);
+                    }
+                }
+            }
+        }
+    }
+}
+
+#[component]
+pub fn SectionTitle(title: String) -> Element {
+    rsx! {
+        h2 { class: "text-text-dark dark:text-white text-3xl font-bold leading-tight tracking-[-0.015em] border-b border-text-dark/10 dark:border-white/10 pb-3 transition-colors",
+            "{title}"
+        }
+    }
+}
+
+#[component]
+pub fn TimelineItem(
+    date: String,
+    title: String,
+    description: String,
+    is_last: Option<bool>,
+) -> Element {
+    let spacing_class = if is_last.unwrap_or(false) {
+        ""
+    } else {
+        "mb-10"
+    };
+    rsx! {
+        div { class: "{spacing_class} ml-4 relative",
+            div { class: "absolute w-4 h-4 bg-primary-light rounded-full mt-1.5 -left-6.5 border border-background-light dark:border-background-dark" }
+            time { class: "mb-1 text-sm font-normal leading-none text-text-dark/40 dark:text-gray-400 transition-colors", "{date}" }
+            h3 { class: "text-lg font-semibold text-text-dark dark:text-white transition-colors", "{title}" }
+            p { class: "text-base font-normal text-text-dark/70 dark:text-[#D4D4D4] transition-colors mt-1",
+                "{description}"
+            }
+        }
+    }
+}

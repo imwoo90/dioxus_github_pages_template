@@ -1,4 +1,3 @@
-use ::serde_json::Value;
 use dioxus::{document::eval, prelude::*};
 use views::{About, BlogList, BlogPost, Contact, Home, Navbar, NotFound, Projects, WasmProject};
 
@@ -54,38 +53,37 @@ const THEME_SCRIPT: &str = r#"
     })();
 "#;
 
+#[allow(non_snake_case)]
 #[component]
 fn App() -> Element {
-    let mut is_dark = use_signal(|| false);
+    let is_dark = use_signal(|| {
+        #[cfg(target_arch = "wasm32")]
+        {
+            if let Some(window) = web_sys::window() {
+                if let Some(storage) = window.local_storage().ok().flatten() {
+                    if let Ok(Some(saved)) = storage.get_item("theme") {
+                        return saved == "dark";
+                    }
+                }
+                if let Ok(Some(media_query_list)) =
+                    window.match_media("(prefers-color-scheme: dark)")
+                {
+                    return media_query_list.matches();
+                }
+            }
+        }
+        false
+    });
     use_context_provider(|| is_dark);
 
-    // Sync theme with document class and localStorage
+    // Update theme: Sync with document class and localStorage
     use_effect(move || {
-        if is_dark() {
-            eval("document.documentElement.classList.add('dark'); localStorage.setItem('theme', 'dark');");
-        } else {
-            eval("document.documentElement.classList.remove('dark'); localStorage.setItem('theme', 'light');");
-        }
-    });
-
-    // Initialize theme from localStorage or system preference
-    // This runs once on mount to sync the signal with the actual state
-    use_effect(move || {
-        spawn(async move {
-            let mut eval_handle = eval(
-                r#"
-                const saved = localStorage.getItem('theme');
-                if (saved) {
-                    dioxus.send(saved === 'dark');
-                } else {
-                    dioxus.send(window.matchMedia('(prefers-color-scheme: dark)').matches);
-                }
-            "#,
-            );
-            if let Ok(Value::Bool(d)) = eval_handle.recv().await {
-                is_dark.set(d);
-            }
-        });
+        let dark = is_dark();
+        eval(&format!(
+            "document.documentElement.classList.toggle('dark', {}); localStorage.setItem('theme', '{}');",
+            dark,
+            if dark { "dark" } else { "light" }
+        ));
     });
 
     rsx! {

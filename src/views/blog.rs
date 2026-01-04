@@ -12,21 +12,13 @@ pub fn BlogList() -> Element {
                     title: "From the Horizon",
                     subtitle: "Exploring the frontiers of Rust, from bare-metal to the web. Find articles, tutorials, and deep dives here.",
                 }
+
+                // Filter / Search Section
                 section { class: "flex flex-col md:flex-row gap-4 px-4 items-center",
-                    div { class: "relative w-full md:flex-1",
-                        span { class: "material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-dark/40 dark:text-gray-400", "search" }
-                        input {
-                            class: "w-full bg-white dark:bg-[#2a2a2a] border border-text-dark/10 dark:border-white/10 rounded-md h-12 pl-10 pr-4 text-text-dark dark:text-white placeholder:text-text-dark/40 dark:placeholder:text-gray-400 focus:ring-primary-light focus:border-primary-light transition-all",
-                            placeholder: "Search articles...",
-                            r#type: "text",
-                        }
-                    }
-                    div { class: "flex flex-wrap gap-2 justify-center",
-                        button { class: "px-4 py-2 text-sm font-medium rounded-md bg-text-dark/10 dark:bg-white/10 text-text-dark dark:text-white hover:bg-text-dark/20 dark:hover:bg-white/20 transition-colors", "All" }
-                        button { class: "px-4 py-2 text-sm font-medium rounded-md bg-transparent text-text-dark/60 dark:text-gray-400 hover:bg-text-dark/10 dark:hover:bg-white/10 hover:text-text-dark dark:hover:text-white transition-colors", "bare-metal" }
-                        button { class: "px-4 py-2 text-sm font-medium rounded-md bg-transparent text-text-dark/60 dark:text-gray-400 hover:bg-text-dark/10 dark:hover:bg-white/10 hover:text-text-dark dark:hover:text-white transition-colors", "mobile" }
-                        button { class: "px-4 py-2 text-sm font-medium rounded-md bg-transparent text-text-dark/60 dark:text-gray-400 hover:bg-text-dark/10 dark:hover:bg-white/10 hover:text-text-dark dark:hover:text-white transition-colors", "web" }
-                        button { class: "px-4 py-2 text-sm font-medium rounded-md bg-transparent text-text-dark/60 dark:text-gray-400 hover:bg-text-dark/10 dark:hover:bg-white/10 hover:text-text-dark dark:hover:text-white transition-colors", "backend" }
+                    BlogSearch { placeholder: "Search articles..." }
+                    BlogCategories {
+                        categories: vec!["bare-metal".to_string(), "mobile".to_string(), "web".to_string(), "backend".to_string()],
+                        active: "All".to_string()
                     }
                 }
 
@@ -58,43 +50,24 @@ pub fn BlogList() -> Element {
         Footer {}
     }
 }
+
 #[component]
 pub fn BlogPost(id: String) -> Element {
-    // In a real app, we would fetch the post based on ID.
-    // Here we hardcode the specific post content provided in the example for all IDs,
-    // or just checking if id == "post-1".
-
     use_effect(move || {
-        // This is a browser-only effect to trigger highlight.js
-        // Dioxus 0.6+ often handles this differently but for prototype this is fine if web-sys is available
-        // or we just inject script.
-        // Since I added the script in index, window.hljs might be available.
-        // For now, I'll rely on the script being present.
-        // JS eval is needed to call highlightAll.
         document::eval("if (window.hljs) window.hljs.highlightAll();");
     });
 
     rsx! {
         div { class: "layout-content-container flex flex-col w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16",
             article { class: "w-full max-w-3xl flex flex-col gap-10",
-                header { class: "flex flex-col gap-6 border-b border-text-dark/5 dark:border-white/5 pb-10",
-                    div { class: "flex items-center gap-2 text-sm text-text-dark/60 dark:text-gray-500 font-medium",
-                        Link { class: "hover:text-primary-light transition-colors", to: Route::BlogList {}, "Blog" }
-                        span { "›" }
-                        span { class: "truncate text-text-dark/40 dark:text-gray-400", "Bare-Metal Rust" }
-                    }
-                    h1 { class: "text-text-dark dark:text-white text-4xl sm:text-5xl font-extrabold leading-tight tracking-tight",
-                        "Bare-Metal Rust: Blinking an LED"
-                    }
-                    div { class: "flex items-center gap-4 text-sm text-gray-400",
-                        span { class: "font-medium text-primary-light", "John Doe" }
-                        span { class: "text-gray-600", "•" }
-                        time { datetime: "2023-10-26", "October 26, 2023" }
-                        span { class: "text-gray-600", "•" }
-                        span { "5 min read" }
-                    }
+                BlogHero {
+                    title: "Bare-Metal Rust: Blinking an LED",
+                    author: "John Doe",
+                    date: "October 26, 2023",
+                    read_time: "5 min read"
                 }
-                div { class: "prose max-w-none",
+
+                div { class: "prose max-w-none dark:prose-invert",
                     p {
                         "Welcome to the fascinating world of bare-metal programming with Rust! In this post, we'll embark on a journey to the very foundations of embedded systems. Our goal is simple but fundamental: to blink an LED on a microcontroller using Rust, without relying on any operating system or standard library (no-std). This is the \"Hello, World!\" of the embedded world, and it's a perfect starting point to understand what makes Rust a powerful choice for low-level development."
                     }
@@ -143,11 +116,14 @@ fn main() -> ! {{
                         ". This will include the Peripheral Access Crate (PAC) for our specific MCU, and a higher-level Hardware Abstraction Layer (HAL) crate that provides safer and more ergonomic APIs to control the hardware."
                     }
                 }
+
+                // Share Section
                 div { class: "mt-8 border-t border-text-dark/5 dark:border-white/5 pt-8",
                      div { class: "flex flex-col sm:flex-row justify-between items-center gap-4 bg-text-dark/5 dark:bg-white/5 p-6 rounded-xl",
                         h3 { class: "text-lg font-bold text-text-dark dark:text-white", "Share this article" }
                         div { class: "flex items-center gap-3",
-                            button { class: "text-text-dark/40 dark:text-gray-400 hover:text-text-dark dark:hover:text-white hover:bg-text-dark/10 dark:hover:bg-[#1DA1F2]/20 p-2.5 rounded-lg transition-all",
+                            button {
+                                class: "text-text-dark/40 dark:text-gray-400 hover:text-text-dark dark:hover:text-white hover:bg-text-dark/10 dark:hover:bg-[#1DA1F2]/20 p-2.5 rounded-lg transition-all",
                                 span { class: "material-symbols-outlined", "share" }
                             }
                         }
