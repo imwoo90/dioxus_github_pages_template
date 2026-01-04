@@ -292,10 +292,10 @@ if (!('encodeInto' in cachedTextEncoder)) {
 
 let WASM_VECTOR_LEN = 0;
 
-function _ZN12wasm_bindgen7convert8closures1_6invoke17h9a82d2f24d534b47E(arg0, arg1, arg2) {
+function _ZN12wasm_bindgen7convert8closures1_6invoke17h75f9b0c9ec6f0495E(arg0, arg1) {
     _assertNum(arg0);
     _assertNum(arg1);
-    wasm._ZN12wasm_bindgen7convert8closures1_6invoke17h9a82d2f24d534b47E(arg0, arg1, arg2);
+    wasm._ZN12wasm_bindgen7convert8closures1_6invoke17h75f9b0c9ec6f0495E(arg0, arg1);
 }
 
 function _ZN12wasm_bindgen7convert8closures1_6invoke17h9e24fdb913ec6a9aE(arg0, arg1, arg2) {
@@ -304,16 +304,16 @@ function _ZN12wasm_bindgen7convert8closures1_6invoke17h9e24fdb913ec6a9aE(arg0, a
     wasm._ZN12wasm_bindgen7convert8closures1_6invoke17h9e24fdb913ec6a9aE(arg0, arg1, arg2);
 }
 
-function _ZN12wasm_bindgen7convert8closures1_6invoke17h75f9b0c9ec6f0495E(arg0, arg1) {
+function _ZN12wasm_bindgen7convert8closures1_6invoke17h9a82d2f24d534b47E(arg0, arg1, arg2) {
     _assertNum(arg0);
     _assertNum(arg1);
-    wasm._ZN12wasm_bindgen7convert8closures1_6invoke17h75f9b0c9ec6f0495E(arg0, arg1);
+    wasm._ZN12wasm_bindgen7convert8closures1_6invoke17h9a82d2f24d534b47E(arg0, arg1, arg2);
 }
 
-function _ZN12wasm_bindgen7convert8closures1_1_6invoke17he85f5972dd972cefE(arg0, arg1, arg2) {
+function _ZN12wasm_bindgen7convert8closures1_6invoke17h593bb46eddc0dcbfE(arg0, arg1, arg2) {
     _assertNum(arg0);
     _assertNum(arg1);
-    wasm._ZN12wasm_bindgen7convert8closures1_1_6invoke17he85f5972dd972cefE(arg0, arg1, arg2);
+    wasm._ZN12wasm_bindgen7convert8closures1_6invoke17h593bb46eddc0dcbfE(arg0, arg1, arg2);
 }
 
 function _ZN12wasm_bindgen7convert8closures1_6invoke17h34a4ef55337c2648E(arg0, arg1, arg2) {
@@ -322,10 +322,10 @@ function _ZN12wasm_bindgen7convert8closures1_6invoke17h34a4ef55337c2648E(arg0, a
     wasm._ZN12wasm_bindgen7convert8closures1_6invoke17h34a4ef55337c2648E(arg0, arg1, arg2);
 }
 
-function _ZN12wasm_bindgen7convert8closures1_6invoke17h593bb46eddc0dcbfE(arg0, arg1, arg2) {
+function _ZN12wasm_bindgen7convert8closures1_1_6invoke17he85f5972dd972cefE(arg0, arg1, arg2) {
     _assertNum(arg0);
     _assertNum(arg1);
-    wasm._ZN12wasm_bindgen7convert8closures1_6invoke17h593bb46eddc0dcbfE(arg0, arg1, arg2);
+    wasm._ZN12wasm_bindgen7convert8closures1_1_6invoke17he85f5972dd972cefE(arg0, arg1, arg2);
 }
 
 function _ZN12wasm_bindgen7convert8closures1_6invoke17h99749e290080e053E(arg0, arg1) {
