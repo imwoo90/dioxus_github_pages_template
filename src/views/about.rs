@@ -1,4 +1,4 @@
-use crate::components::*;
+use crate::components::{Badge, Container, Section, SectionTitle, TimelineItem};
 use crate::views::Footer;
 use dioxus::prelude::*;
 

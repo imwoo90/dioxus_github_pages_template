@@ -1,8 +1,10 @@
-use components::ProjectDetail;
+// Main entry point for the Dioxus blog application
 use dioxus::prelude::*;
-use views::{About, BlogList, BlogPost, Contact, Home, Navbar, NotFound, Projects};
+use views::{About, BlogList, BlogPost, Contact, Home, Navbar, NotFound, ProjectDetail, Projects};
 
 mod components;
+mod content;
+mod hooks;
 mod posts;
 mod projects_data;
 mod views;

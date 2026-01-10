@@ -1,4 +1,4 @@
-use crate::components::*;
+use crate::components::{Container, Hero, Input, PrimaryButton, Section, SectionTitle, TextArea};
 use crate::views::Footer;
 use dioxus::prelude::*;
 

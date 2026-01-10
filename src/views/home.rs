@@ -10,38 +10,42 @@ pub fn Home() -> Element {
     let posts = get_all_posts();
     let projects = get_all_projects();
 
-    // Create a unified list of recent items
-    let mut recent_items = Vec::new();
-
-    for post in posts {
-        recent_items.push((
-            post.date.clone(),
-            rsx! {
-                Card {
-                    title: post.title.clone(),
-                    description: post.description.clone(),
-                    image_url: post.image_url.clone(),
-                    tags: post.tags.clone(),
-                    link_to: Route::BlogPost { id: post.id.clone() },
-                }
-            },
-        ));
-    }
-
-    for project in projects {
-        recent_items.push((
-            project.date.clone(),
-            rsx! {
-                Card {
-                    title: project.title.clone(),
-                    description: project.description.clone(),
-                    image_url: project.image_url.clone(),
-                    tags: project.tags.clone(),
-                    link_to: Route::ProjectDetail { id: project.id.clone() },
-                }
-            },
-        ));
-    }
+    // Create a unified list of recent items using iterators
+    let mut recent_items: Vec<_> = posts
+        .into_iter()
+        .map(|post| {
+            (
+                post.date.clone(),
+                rsx! {
+                    Card {
+                        title: post.title.clone(),
+                        description: post.description.clone(),
+                        image_url: post.image_url.clone(),
+                        tags: post.tags.clone(),
+                        link_to: Route::BlogPost {
+                            id: post.id.clone(),
+                        },
+                    }
+                },
+            )
+        })
+        .chain(projects.into_iter().map(|project| {
+            (
+                project.date.clone(),
+                rsx! {
+                    Card {
+                        title: project.title.clone(),
+                        description: project.description.clone(),
+                        image_url: project.image_url.clone(),
+                        tags: project.tags.clone(),
+                        link_to: Route::ProjectDetail {
+                            id: project.id.clone(),
+                        },
+                    }
+                },
+            )
+        }))
+        .collect();
 
     // Sort by date descending
     recent_items.sort_by(|a, b| b.0.cmp(&a.0));
