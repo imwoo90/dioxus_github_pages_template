@@ -1,67 +1,57 @@
 ---
-title: "Hosting Dioxus on GitHub Pages: A Step-by-Step Guide"
-date: "2024-03-21"
-author: "Antigravity"
-description: "Learn how to build and deploy your Dioxus web application to GitHub Pages, featuring automatic routing and base path configuration."
-image_url: "https://lh3.googleusercontent.com/aida-public/AB6AXuAI1Cr-l7Wo5cgHt_zfG7BK8WvHPYWk5oEm-9oEQ6_MylTr-gO7ZrldH3pUrirQ5dYe4yZDhwcV-arSM4h3WA2urB99awKGkr9SLyWeteJEQExthZdm_fK0mqi3c95QNudHSRPVSZIyywMm-LADZqGhXreY55_EqUksKyzJXbGh43v6TWyfjFjAPn1a4OPM0KYZ-1joKgoI6uEnbR-6-cn4GYPzcL8ari8x_9XuWah3PJcoY7eqIyd4R-RNA0bwyrgkJRXbMCMI7Qeu"
-tags: ["dioxus", "web", "github-pages"]
+title: "Building a Rust Blog on GitHub Pages with Dioxus"
+date: "2026-01-11"
+author: "imwoo90"
+description: "A comprehensive guide on how we built this Rust-powered blog and deployed it to GitHub Pages using Dioxus and GitHub Actions."
+image_url: "https://raw.githubusercontent.com/DioxusLabs/dioxus/master/packages/desktop/examples/assets/logo.png"
+tags: ["rust", "dioxus", "github-pages", "tutorial"]
 ---
 
-Dioxus is a powerful framework for building cross-platform user interfaces with Rust. One of its most common use cases is building web applications that can be hosted for free on GitHub Pages. In this guide, we'll walk through the essential configuration steps to get your Dioxus app live.
+Dioxus is an incredible framework that brings the power of Rust to the web via WebAssembly. In this post, I'll share the unique development workflow I used to create this blog—from initial AI-assisted design to final deployment on GitHub Pages.
 
-## 1. Setting the Base Path
+## Phase 1: Designing with Stitch
 
-When hosting on GitHub Pages, your site is often served at a subpath (e.g., `https://username.github.io/repo-name/`). For Dioxus to resolve assets and routes correctly, you must specify this in your `Dioxus.toml`.
+The journey started with a visual vision. Instead of coding CSS from scratch, I used [Stitch](https://stitch.withgoogle.com/) to design the blog's interface. It allowed for rapid prototyping of the modern, dark-themed aesthetic you see now.
 
+- **Stitch Design Project**: [View Design](https://stitch.withgoogle.com/projects/12286301471497023600)
+
+## Phase 2: Setting up the Foundation
+
+While the design was being finalized, I prepared a clean **Dioxus** base project. I initialized a standard Dioxus web app and pushed it to a GitHub repository. This acted as the "skeleton" where the design and logic would eventually live.
+
+## Phase 3: Merging Design via Jules
+
+It's important to note that **Stitch** doesn't directly generate Dioxus `rsx!` macros; its output is typically clean HTML, CSS, or specialized design tokens. To bridge this gap, I used **Jules** (Google's autonomous coding assistant). Jules took the design output from Stitch and intelligently merged the layout, styles, and components into my pre-prepared Dioxus GitHub repository. This automated merge saved hours of manual CSS-to-RSX conversion, giving me a solid UI foundation inside the Dioxus workspace.
+
+## Phase 4: Refinement with Antigravity
+
+With the design-driven code in place, I used **Antigravity** (a powerful agentic AI coding assistant) to handle the complex logic and fine-grained details. Antigravity helped:
+- Implement the Markdown parsing engine (`pulldown-cmark`).
+- Set up the dynamic routing for blog posts and project pages.
+- Refine the responsive behavior and interactive elements.
+
+## Phase 5: Hosting on GitHub Pages (The Technical Polish)
+
+The final step was ensuring the world could see it. Here are the key technical details for GitHub Pages:
+
+### ⚙️ Configuring `Dioxus.toml`
+Since GitHub Pages hosts sites at `username.github.io/repo-name/`, we must set the `base_path`:
 ```toml
 [web.app]
-base_path = "repo-name"
+base_path = "your_repo_name"
 ```
 
-## 2. Using the Dioxus CLI
-
-The `dx` tool simplifies the build process. To create a production-ready bundle for the web, run:
-
+### 🛰 Handling the SPA 404 Issue
+Because it's a Single Page Application (SPA), refreshes on sub-routes would normally return 404. We handle this in our deployment workflow by copying the entry point:
 ```bash
-dx build --release
+cp docs/index.html docs/404.html
 ```
 
-This will generate a `dist` (or `docs`) folder containing your `index.html`, compiled WebAssembly, and assets.
-
-## 3. GitHub Actions for Automatic Deployment
-
-You can automate the deployment process using GitHub Actions. Create a file at `.github/workflows/deploy.yml`:
-
-```yaml
-name: Deploy to GitHub Pages
-
-on:
-  push:
-    branches: ["main"]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
-      - name: Install Dioxus CLI
-        run: cargo install dioxus-cli
-      - name: Build Web App
-        run: dx build --release
-      - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          folder: dist
-```
-
-## 4. Handling 404s on Refresh
-
-GitHub Pages is a static host, which means direct navigation to routes like `/blog/post-1` might result in a 404 error if you refresh the page. A common workaround is to duplicate `index.html` as `404.html` in your distribution folder.
+### 🚢 Automated deployment
+Whenever I push to the `main` branch, a GitHub Action automatically builds the Wasm binary, bundles the assets, and deploys everything to the `gh-pages` branch.
 
 ## Conclusion
 
-Hosting with Dioxus on GitHub Pages is efficient and cost-effective. By combining Rust's performance with GitHub's hosting, you can create fast, modern web experiences with minimal overhead.
+By combining the design power of **Stitch**, the automation of **Jules**, the coding intelligence of **Antigravity**, and the performance of **Dioxus**, building a premium blog has never been more efficient.
 
 Happy coding!

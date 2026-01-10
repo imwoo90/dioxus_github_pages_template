@@ -32,10 +32,8 @@ jobs:
 
       - name: Post Build Adjustments
         run: |
-          # 1. 빌드 결과물 이동
           mv docs/public/* docs/
 
-          # 2. 404.html 생성
           cp docs/index.html docs/404.html
 
       - name: Deploy to GitHub Pages
