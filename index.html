@@ -5,10 +5,183 @@
         <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta charset="UTF-8">
-    <link rel="preload" as="script" href="/./assets/my_blog-dxh5f29a1623df6042.js" crossorigin><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="true"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&#38;family=Roboto+Mono&#38;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&#38;display=swap"/><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"/><link rel="icon" href="/assets/favicon-dxh82c1fe8f85d667cd.ico"/><link rel="stylesheet" href="/assets/tailwind-dxh9b447c5ca31f7afe.css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script></head>
+        <style>
+            /* Inter Font */
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap') layer;
+
+            #dx-toast-template {
+                display: none;
+                visibility: hidden;
+            }
+
+            .dx-toast {
+                position: absolute;
+                top: 10px;
+                right: 0;
+                padding-right: 10px;
+                user-select: none;
+                /* transition: transform 0.2s ease; */
+                z-index: 2147483647;
+            }
+
+            .dx-toast .dx-toast-inner {
+                /* transition: right 0.2s ease-out; */
+                position: fixed;
+
+                background-color: #181B20;
+                color: #ffffff;
+                font-family: "Inter", sans-serif;
+
+                display: grid;
+                grid-template-columns: auto auto;
+                max-width: 400px;
+                min-height: 56px;
+                border-radius: 5px;
+            }
+
+            .dx-toast .dx-toast-inner {
+                cursor: pointer;
+                margin-right: 10px;
+            }
+
+            .dx-toast .dx-toast-level-bar-container {
+                height: 100%;
+                width: 6px;
+            }
+
+            .dx-toast .dx-toast-level-bar-container .dx-toast-level-bar {
+                width: 100%;
+                height: 100%;
+                border-radius: 5px 0px 0px 5px;
+            }
+
+            .dx-toast .dx-toast-content {
+                padding: 8px;
+            }
+
+            .dx-toast .dx-toast-header {
+                display: flex;
+                flex-direction: row;
+                justify-content: start;
+                align-items: end;
+                margin-bottom: 10px;
+            }
+
+            .dx-toast .dx-toast-header>svg {
+                height: 18px;
+                margin-right: 5px;
+            }
+
+            .dx-toast .dx-toast-header .dx-toast-header-text {
+                font-size: 14px;
+                font-weight: 700;
+                padding: 0;
+                margin: 0;
+            }
+
+            .dx-toast .dx-toast-msg {
+                font-size: 11px;
+                font-weight: 400;
+                padding: 0;
+                margin: 0;
+            }
+
+            .dx-toast-level-bar.info {
+                background-color: #428EFF;
+            }
+
+            .dx-toast-level-bar.success {
+                background-color: #42FF65;
+            }
+
+            .dx-toast-level-bar.error {
+                background-color: #FF4242;
+            }
+        </style>
+        <script>
+            const STORAGE_KEY = "SCHEDULED-DX-TOAST";
+            let currentTimeout = null;
+            let currentToastId = 0;
+
+            // Show a toast, removing the previous one.
+            function showDXToast(headerText, message, progressLevel, durationMs) {
+                document.getElementById("__dx-toast-decor").className = `dx-toast-level-bar ${progressLevel}`;
+                document.getElementById("__dx-toast-text").innerText = headerText;
+                document.getElementById("__dx-toast-msg").innerText = message;
+                document.getElementById("__dx-toast-inner").style.right = "0";
+                document.getElementById("__dx-toast").removeAttribute("aria-hidden");
+                document.getElementById("__dx-toast").addEventListener("click", closeDXToast);
+
+
+                // Wait a bit of time so animation plays correctly.
+                setTimeout(
+                    () => {
+                        let ourToastId = currentToastId;
+                        currentTimeout = setTimeout(() => {
+                            if (ourToastId == currentToastId) {
+                                closeDXToast();
+                            }
+                        }, durationMs);
+                    },
+                    100
+                );
+
+                currentToastId += 1;
+            }
+
+            // Schedule a toast to be displayed after reload.
+            function scheduleDXToast(headerText, message, level, durationMs) {
+                let data = {
+                    headerText,
+                    message,
+                    level,
+                    durationMs,
+                };
+
+                let jsonData = JSON.stringify(data);
+                sessionStorage.setItem(STORAGE_KEY, jsonData);
+            }
+
+            // Close the current toast.
+            function closeDXToast() {
+                document.getElementById("__dx-toast-inner").style.right = "-1000px";
+                document.getElementById("__dx-toast").setAttribute("aria-hidden", "true");
+                clearTimeout(currentTimeout);
+            }
+
+            // Handle any scheduled toasts after reload.
+            let potentialData = sessionStorage.getItem(STORAGE_KEY);
+            if (potentialData) {
+                sessionStorage.removeItem(STORAGE_KEY);
+                let data = JSON.parse(potentialData);
+                showDXToast(data.headerText, data.message, data.level, data.durationMs);
+            }
+
+            window.scheduleDXToast = scheduleDXToast;
+            window.showDXToast = showDXToast;
+            window.closeDXToast = closeDXToast;
+        </script>
+    <meta name="DIOXUS_ASSET_ROOT" content="my_blog"></head>
     <body>
-        <div id="main"><script>window.hydrate_queue=[];window.dx_hydrate=(id,data,debug_types,debug_locations)=>{let decoded=atob(data),bytes=Uint8Array.from(decoded,(c)=>c.charCodeAt(0));if(window.hydration_callback)window.hydration_callback(id,bytes,debug_types,debug_locations);else window.hydrate_queue.push([id,bytes,debug_types,debug_locations])};
-</script><!--placeholder0--><!--placeholder1--><!--placeholder2--><!--placeholder3--><!--placeholder4--><!--placeholder5--><!--placeholder6--><div class="" data-node-hydration="7"><div class="bg-background-light dark:bg-background-dark text-text-dark dark:text-text-light min-h-screen transition-colors duration-300"><header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-text-dark/10 dark:border-white/10 px-4 sm:px-6 lg:px-8 py-4 sticky top-0 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm z-50 transition-colors duration-300" data-node-hydration="8"><a href="/" class="flex items-center gap-4 text-text-dark dark:text-white group" aria-current="page" data-node-hydration="9,click:1"><div class="size-6 text-primary-light group-hover:scale-110 transition-transform duration-300" data-node-hydration="10"><svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M13.8261 30.5736C16.7203 29.8826 20.2244 29.4783 24 29.4783C27.7756 29.4783 31.2797 29.8826 34.1739 30.5736C36.9144 31.2278 39.9967 32.7669 41.3563 33.8352L24.8486 7.36089C24.4571 6.73303 23.5429 6.73303 23.1514 7.36089L6.64374 33.8352C8.00331 32.7669 11.0856 31.2278 13.8261 30.5736Z" fill="currentColor"></path><path clip-rule="evenodd" d="M39.998 35.764C39.9944 35.7463 39.9875 35.7155 39.9748 35.6706C39.9436 35.5601 39.8949 35.4259 39.8346 35.2825C39.8168 35.2403 39.7989 35.1993 39.7813 35.1602C38.5103 34.2887 35.9788 33.0607 33.7095 32.5189C30.9875 31.8691 27.6413 31.4783 24 31.4783C20.3587 31.4783 17.0125 31.8691 14.2905 32.5189C12.0012 33.0654 9.44505 34.3104 8.18538 35.1832C8.17384 35.2075 8.16216 35.233 8.15052 35.2592C8.09919 35.3751 8.05721 35.4886 8.02977 35.589C8.00356 35.6848 8.00039 35.7333 8.00004 35.7388C8.00004 35.739 8 35.7393 8.00004 35.7388C8.00004 35.7641 8.0104 36.0767 8.68485 36.6314C9.34546 37.1746 10.4222 37.7531 11.9291 38.2772C14.9242 39.319 19.1919 40 24 40C28.8081 40 33.0758 39.319 36.0709 38.2772C37.5778 37.7531 38.6545 37.1746 39.3151 36.6314C39.9006 36.1499 39.9857 35.8511 39.998 35.764ZM4.95178 32.7688L21.4543 6.30267C22.6288 4.4191 25.3712 4.41909 26.5457 6.30267L43.0534 32.777C43.0709 32.8052 43.0878 32.8338 43.104 32.8629L41.3563 33.8352C43.104 32.8629 43.1038 32.8626 43.104 32.8629L43.1051 32.865L43.1065 32.8675L43.1101 32.8739L43.1199 32.8918C43.1276 32.906 43.1377 32.9246 43.1497 32.9473C43.1738 32.9925 43.2062 33.0545 43.244 33.1299C43.319 33.2792 43.4196 33.489 43.5217 33.7317C43.6901 34.1321 44 34.9311 44 35.7391C44 37.4427 43.003 38.7775 41.8558 39.7209C40.6947 40.6757 39.1354 41.4464 37.385 42.0552C33.8654 43.2794 29.133 44 24 44C18.867 44 14.1346 43.2794 10.615 42.0552C8.86463 41.4464 7.30529 40.6757 6.14419 39.7209C4.99695 38.7775 3.99999 37.4427 3.99999 35.7391C3.99999 34.8725 4.29264 34.0922 4.49321 33.6393C4.60375 33.3898 4.71348 33.1804 4.79687 33.0311C4.83898 32.9556 4.87547 32.8935 4.9035 32.8471C4.91754 32.8238 4.92954 32.8043 4.93916 32.7889L4.94662 32.777L4.95178 32.7688ZM35.9868 29.004L24 9.77997L12.0131 29.004C12.4661 28.8609 12.9179 28.7342 13.3617 28.6282C16.4281 27.8961 20.0901 27.4783 24 27.4783C27.9099 27.4783 31.5719 27.8961 34.6383 28.6282C35.082 28.7342 35.5339 28.8609 35.9868 29.004Z" fill="currentColor" fill-rule="evenodd"></path></svg></div><h2 class="text-text-dark dark:text-white text-xl font-bold leading-tight tracking-[-0.015em]" data-node-hydration="11">Rust&#39;s Horizon</h2></a><div class="flex flex-1 justify-end items-center gap-4"><nav class="hidden md:flex items-center gap-8"><a href="/" class="text-sm font-medium leading-normal transition-colors text-primary-light" aria-current="page" data-node-hydration="12,click:1"><!--node-id13-->Home<!--#--></a><a href="/blog" class="text-sm font-medium leading-normal transition-colors text-text-dark/70 dark:text-[#D4D4D4] hover:text-primary-light" data-node-hydration="14,click:1"><!--node-id15-->Blog<!--#--></a><a href="/projects" class="text-sm font-medium leading-normal transition-colors text-text-dark/70 dark:text-[#D4D4D4] hover:text-primary-light" data-node-hydration="16,click:1"><!--node-id17-->Projects<!--#--></a><a href="/about" class="text-sm font-medium leading-normal transition-colors text-text-dark/70 dark:text-[#D4D4D4] hover:text-primary-light" data-node-hydration="18,click:1"><!--node-id19-->About<!--#--></a><a href="/contact" class="text-sm font-medium leading-normal transition-colors text-text-dark/70 dark:text-[#D4D4D4] hover:text-primary-light" data-node-hydration="20,click:1"><!--node-id21-->Contact<!--#--></a></nav><button class="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/5 text-text-dark dark:text-white transition-colors" data-node-hydration="22,click:1"><span class="material-symbols-outlined"><!--node-id23-->dark_mode<!--#--></span></button><button class="md:hidden text-text-dark dark:text-white p-2" data-node-hydration="24,click:1"><span class="material-symbols-outlined"><!--node-id25-->menu<!--#--></span></button></div><!--placeholder26--></header><div class="layout-content-container flex flex-col w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8" data-node-hydration="27"><main class="flex flex-col gap-16 md:gap-24 mt-8 md:mt-16" data-node-hydration="28"><div class="w-full flex flex-col gap-6 text-center items-center px-4 py-10 md:py-16 transition-colors duration-300" data-node-hydration="29"><div class="flex flex-col gap-4"><h1 class="text-text-dark dark:text-white text-4xl md:text-6xl font-black leading-tight tracking-[-0.033em]"><!--node-id30-->Rust&#39;s Horizon<!--#--></h1><p class="text-text-dark/80 dark:text-[#D4D4D4] text-lg md:text-xl font-normal leading-normal max-w-3xl mx-auto" data-node-hydration="31"><!--node-id32-->Navigating the Rust ecosystem from silicon to screen. I document the journey of building high-performance software across the entire stack—spanning bare-metal MCUs, backend services, and native mobile apps.<!--#--></p></div><a href="/blog" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-primary-light text-text-dark text-base font-bold leading-normal tracking-[0.015em] hover:opacity-90 transition-all active:scale-95" data-node-hydration="33,click:1"><span class="truncate" data-node-hydration="34"><!--node-id35-->Explore the Blog<!--#--></span></a></div><section class="flex flex-col gap-6" data-node-hydration="36"><h2 class="text-text-dark dark:text-white text-3xl font-bold leading-tight tracking-[-0.015em] border-b border-text-dark/10 dark:border-white/10 pb-3 transition-colors" data-node-hydration="37"><!--node-id38-->Latest Articles<!--#--></h2><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" data-node-hydration="39"><a href="/blog/post-1" class="flex flex-col rounded-lg overflow-hidden bg-white dark:bg-[#2a2a2a] border border-text-dark/5 dark:border-white/10 group transition-all duration-300 hover:shadow-lg dark:hover:bg-white/5" data-node-hydration="40,click:1"><div class="w-full aspect-video bg-cover bg-center rounded-t-lg" style="background-image: url(&#39;https://lh3.googleusercontent.com/aida-public/AB6AXuBCi_pzNBVAhdhyYbqWap1-J9p4C5e7Qg6V8ZzF0E8aKgg5gcyH6nlx6u8TcJznHXhdlE6wILKxlF_rVI-dsKeRThWqbJXnybVHkiS879RY2kqgOxaj8lGDFgqgIlrbsxFIjg_SsQ7ddoeF67K9JgN6ZeqobfwkcRHjFnG2BbRCumKTZTwKS1bcPJuFg6X5cEc4popXC2x7h-Hg6_A_WJ1ZEyEQg9cnRfLTod-WujsdskNkUlBc-SRxRmTO7k0sa4JyR-4QUQ4or0YC&#39;)" data-node-hydration="41"></div><div class="p-6 flex flex-col flex-grow" data-node-hydration="42"><h3 class="text-text-dark dark:text-white text-xl font-bold leading-tight tracking-[-0.015em] group-hover:text-primary-light transition-colors"><!--node-id43-->Bare-Metal Rust: Blinking an LED<!--#--></h3><p class="text-text-dark/70 dark:text-[#D4D4D4] text-base font-normal leading-normal mt-2 mb-4 flex-grow"><!--node-id44-->A deep dive into writing Rust for microcontrollers, starting from the ground up without any standard library.<!--#--></p><div class="flex flex-wrap items-center gap-2 mb-4"><span class="text-xs font-mono bg-text-dark/5 dark:bg-gray-700/50 text-text-dark/70 dark:text-gray-300 px-2 py-1 rounded transition-colors" data-node-hydration="45"><!--node-id46-->bare-metal<!--#--></span><span class="text-xs font-mono bg-text-dark/5 dark:bg-gray-700/50 text-text-dark/70 dark:text-gray-300 px-2 py-1 rounded transition-colors" data-node-hydration="47"><!--node-id48-->embedded<!--#--></span></div><div class="text-primary-light text-sm font-semibold hover:underline flex items-center gap-1" data-node-hydration="49"><!--node-id50-->Read More <!--#--><span class="material-symbols-outlined text-base">arrow_forward</span></div></div></a><a href="/projects/wasm" class="flex flex-col rounded-lg overflow-hidden bg-white dark:bg-[#2a2a2a] border border-text-dark/5 dark:border-white/10 group transition-all duration-300 hover:shadow-lg dark:hover:bg-white/5" data-node-hydration="51,click:1"><div class="w-full aspect-video bg-cover bg-center rounded-t-lg" style="background-image: url(&#39;https://lh3.googleusercontent.com/aida-public/AB6AXuAI1Cr-l7Wo5cgHt_zfG7BK8WvHPYWk5oEm-9oEQ6_MylTr-gO7ZrldH3pUrirQ5dYe4yZDhwcV-arSM4h3WA2urB99awKGkr9SLyWeteJEQExthZdm_fK0mqi3c95QNudHSRPVSZIyywMm-LADZqGhXreY55_EqUksKyzJXbGh43v6TWyfjFjAPn1a4OPM0KYZ-1joKgoI6uEnbR-6-cn4GYPzcL8ari8x_9XuWah3PJcoY7eqIyd4R-RNA0bwyrgkJRXbMCMI7Qeu&#39;)" data-node-hydration="52"></div><div class="p-6 flex flex-col flex-grow" data-node-hydration="53"><h3 class="text-text-dark dark:text-white text-xl font-bold leading-tight tracking-[-0.015em] group-hover:text-primary-light transition-colors"><!--node-id54-->Compiling Rust to WebAssembly<!--#--></h3><p class="text-text-dark/70 dark:text-[#D4D4D4] text-base font-normal leading-normal mt-2 mb-4 flex-grow"><!--node-id55-->Learn how to leverage Rust&#39;s performance and safety in the browser by compiling it to WebAssembly.<!--#--></p><div class="flex flex-wrap items-center gap-2 mb-4"><span class="text-xs font-mono bg-text-dark/5 dark:bg-gray-700/50 text-text-dark/70 dark:text-gray-300 px-2 py-1 rounded transition-colors" data-node-hydration="56"><!--node-id57-->webassembly<!--#--></span><span class="text-xs font-mono bg-text-dark/5 dark:bg-gray-700/50 text-text-dark/70 dark:text-gray-300 px-2 py-1 rounded transition-colors" data-node-hydration="58"><!--node-id59-->frontend<!--#--></span></div><div class="text-primary-light text-sm font-semibold hover:underline flex items-center gap-1" data-node-hydration="60"><!--node-id61-->Read More <!--#--><span class="material-symbols-outlined text-base">arrow_forward</span></div></div></a><div class="flex flex-col rounded-lg overflow-hidden bg-white dark:bg-[#2a2a2a] border border-text-dark/5 dark:border-white/10 group transition-all duration-300 hover:shadow-lg dark:hover:bg-white/5" data-node-hydration="62"><div class="w-full aspect-video bg-cover bg-center rounded-t-lg" style="background-image: url(&#39;https://lh3.googleusercontent.com/aida-public/AB6AXuBw0O5mBTIGcNEI5F7O7cvNFLBqR3vtVXX0xpBIqdxMjQzqsflRIpLkWfHeYCzI6JbOoWtv8PgIDgXtmk1807iK6WPBXbslbZdBkFcanHrmA96bfNqegGjfk7wDF_Fgn7ElE5a0jPvGvSK1_wtTHkbPQQoK4e-SABmKm54PP006iDJN_lfNqiAhZmVUi5cWTvpPT-VFpEG77Ne324il3ltYhpF1B-kqpgMWymESqPg9jer8niQofq_Q8vPoEPCPZvuSOYEHJklGZa8a&#39;)" data-node-hydration="63"></div><div class="p-6 flex flex-col flex-grow" data-node-hydration="64"><h3 class="text-text-dark dark:text-white text-xl font-bold leading-tight tracking-[-0.015em] group-hover:text-primary-light transition-colors"><!--node-id65-->Building Native Mobile Apps with Rust<!--#--></h3><p class="text-text-dark/70 dark:text-[#D4D4D4] text-base font-normal leading-normal mt-2 mb-4 flex-grow"><!--node-id66-->Exploring how to create cross-platform native mobile applications using a Rust backend and web-based frontend with Tauri Mobile.<!--#--></p><div class="flex flex-wrap items-center gap-2 mb-4"><span class="text-xs font-mono bg-text-dark/5 dark:bg-gray-700/50 text-text-dark/70 dark:text-gray-300 px-2 py-1 rounded transition-colors" data-node-hydration="67"><!--node-id68-->mobile<!--#--></span><span class="text-xs font-mono bg-text-dark/5 dark:bg-gray-700/50 text-text-dark/70 dark:text-gray-300 px-2 py-1 rounded transition-colors" data-node-hydration="69"><!--node-id70-->tauri<!--#--></span></div><a class="text-primary-light text-sm font-semibold hover:underline flex items-center gap-1" href="#" data-node-hydration="71"><!--node-id72-->Read More <!--#--><span class="material-symbols-outlined text-base">arrow_forward</span></a></div></div></div></section><section class="flex flex-col items-center text-center gap-6 bg-white dark:bg-white/5 p-8 sm:p-12 rounded-lg transition-colors border border-text-dark/5 dark:border-white/5 shadow-sm dark:shadow-none"><h2 class="text-text-dark dark:text-white text-3xl font-bold leading-tight tracking-[-0.015em] border-b border-text-dark/10 dark:border-white/10 pb-3 transition-colors" data-node-hydration="73"><!--node-id74-->Let&#39;s Build Together<!--#--></h2><p class="text-text-dark/80 dark:text-[#D4D4D4] text-base font-normal leading-normal max-w-2xl">I&#39;m passionate about tackling challenging projects with Rust. If you&#39;re looking for a developer with deep experience in embedded systems, performance optimization, and cross-platform development, let&#39;s talk.</p><a href="/contact" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-primary-light text-text-dark text-base font-bold leading-normal tracking-[0.015em] hover:opacity-90 transition-all active:scale-95" data-node-hydration="75,click:1"><span class="truncate" data-node-hydration="76"><!--node-id77-->Get in Touch<!--#--></span></a></section></main></div><footer class="mt-16 md:mt-24 py-12 border-t border-solid border-text-dark/10 dark:border-white/10 bg-background-light dark:bg-background-dark transition-colors duration-300" data-node-hydration="78"><div class="flex flex-col md:flex-row justify-between items-center gap-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full"><div class="text-sm text-text-dark/40 dark:text-gray-500 order-3 md:order-1 font-medium">© 2024 Rust&#39;s Horizon. All Rights Reserved.</div><nav class="flex flex-wrap justify-center gap-8 text-sm font-semibold text-text-dark/70 dark:text-[#D4D4D4] order-1 md:order-2"><a href="/" class="hover:text-primary-light transition-all hover:-translate-y-0.5" aria-current="page" data-node-hydration="79,click:1"><!--node-id80-->Home<!--#--></a><a href="/blog" class="hover:text-primary-light transition-all hover:-translate-y-0.5" data-node-hydration="81,click:1"><!--node-id82-->Blog<!--#--></a><a href="/projects" class="hover:text-primary-light transition-all hover:-translate-y-0.5" data-node-hydration="83,click:1"><!--node-id84-->Projects<!--#--></a><a href="/about" class="hover:text-primary-light transition-all hover:-translate-y-0.5" data-node-hydration="85,click:1"><!--node-id86-->About<!--#--></a><a href="/contact" class="hover:text-primary-light transition-all hover:-translate-y-0.5" data-node-hydration="87,click:1"><!--node-id88-->Contact<!--#--></a></nav><div class="flex items-center gap-5 order-2 md:order-3"><a aria-label="GitHub Profile" class="text-text-dark/40 dark:text-gray-500 hover:text-primary-light transition-all hover:scale-110" href="#"><svg aria-hidden="true" class="size-6" fill="currentColor" viewBox="0 0 24 24"><path clip-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.168 6.839 9.49.5.092.682-.217.682-.482 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.031-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.03 1.595 1.03 2.688 0 3.848-2.338 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.001 10.001 0 0022 12c0-5.523-4.477-10-10-10z" fill-rule="evenodd"></path></svg></a><a aria-label="LinkedIn Profile" class="text-text-dark/40 dark:text-gray-500 hover:text-primary-light transition-all hover:scale-110" href="#"><svg aria-hidden="true" class="size-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"></path></svg></a></div></div></footer></div></div><script>window.initial_dioxus_hydration_data="ioEY9oIYYRgv9oEY9YEY9YEY9YEY9YEY9YEY9YEY9Q==";</script></div>
-    <script type="module" async src="/./assets/my_blog-dxh5f29a1623df6042.js"></script>
+        <div id="__dx-toast" class="dx-toast" aria-hidden="true">
+            <div id="__dx-toast-inner" class="dx-toast-inner" style="right:-1000px;">
+                <div class="dx-toast-level-bar-container">
+                    <div id="__dx-toast-decor" class="dx-toast-level-bar __info"></div>
+                </div>
+                <div class="dx-toast-content">
+                    <div class="dx-toast-header">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" preserveAspectRatio="none">
+                            <path d="M22.158 1.783c0 3.077-.851 5.482-2.215 7.377s-3.32 3.557-5.447 5.33-4.425 3.657-6.252 6.195-3.102 5.515-3.102 9.532h4.699c0-3.077.853-5.377 2.217-7.272s3.32-3.557 5.447-5.33 4.425-3.657 6.252-6.195 3.102-5.62 3.102-9.637z" fill="#e96020"/>
+                            <path d="M9.531 25.927c-.635 0-1.021.515-1.02 1.15s.385 1.151 1.02 1.15H22.47a1.151 1.151 0 1 0 0-2.301zm1.361-4.076c-.608 0-.954.558-.953 1.166s.346 1.035.953 1.035h10.217a1.101 1.101 0 1 0 0-2.201zm0-13.594a1.101 1.101 0 1 0 0 2.201h10.217c.607 0 .953-.598.953-1.205s-.345-.996-.953-.996zM9.531 4.021A1.15 1.15 0 0 0 8.38 5.17a1.15 1.15 0 0 0 1.15 1.15h12.94c.635 0 1.021-.498 1.02-1.133s-.386-1.166-1.02-1.166z" fill="#2d323b"/>
+                            <path d="M5.142 1.783c0 4.016 1.275 7.099 3.102 9.637s4.125 4.422 6.252 6.195 4.083 3.656 5.447 5.551 2.215 3.974 2.215 7.051h4.701c0-4.016-1.275-7.038-3.102-9.576s-4.125-4.422-6.252-6.195-4.083-3.435-5.447-5.33S9.841 4.86 9.841 1.783z" fill="#00a8d6"/>
+                        </svg>
+                        <h3 id="__dx-toast-text" class="dx-toast-header-text">Your app is being rebuilt.</h3>
+                    </div>
+                    <p id="__dx-toast-msg" class="dx-toast-msg">A non-hot-reloadable change occurred and we must rebuild.</p>
+                </div>
+            </div>
+        </div>
+        <div id="main"></div>
+    <script type="module" async src="/my_blog/wasm/my_blog.js"></script>
             </body>
 </html>
