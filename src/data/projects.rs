@@ -1,3 +1,4 @@
+use crate::data::utils::{get_read_time as shared_get_read_time, parse_frontmatter};
 use include_dir::{include_dir, Dir};
 use serde::{Deserialize, Serialize};
 
@@ -26,13 +27,7 @@ pub struct Project {
 
 impl Project {
     pub fn get_read_time(&self) -> String {
-        let words = self.content.split_whitespace().count();
-        let minutes = (words as f32 / 200.0).ceil() as u32;
-        if minutes <= 1 {
-            "1 min read".to_string()
-        } else {
-            format!("{} min read", minutes)
-        }
+        shared_get_read_time(&self.content)
     }
 }
 
@@ -78,23 +73,11 @@ fn parse_project_meta(content: &str, id: String) -> Result<ProjectMeta, String> 
 }
 
 fn parse_project_full(content: &str, id: String) -> Result<Project, String> {
-    if !content.starts_with("---") {
-        return Err("No frontmatter found".to_string());
-    }
-
-    let parts: Vec<&str> = content.splitn(3, "---").collect();
-    if parts.len() < 3 {
-        return Err("Invalid frontmatter format".to_string());
-    }
-
-    let yaml = parts[1];
-    let markdown = parts[2];
-
-    let mut meta: ProjectMeta = serde_yaml::from_str(yaml).map_err(|e| e.to_string())?;
+    let (mut meta, markdown): (ProjectMeta, &str) = parse_frontmatter(content)?;
     meta.id = id;
 
     Ok(Project {
         meta,
-        content: markdown.trim().to_string(),
+        content: markdown.to_string(),
     })
 }

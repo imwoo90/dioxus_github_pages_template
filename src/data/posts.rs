@@ -1,9 +1,11 @@
 // Forces recompilation to refresh included files
+use crate::data::utils::{get_read_time as shared_get_read_time, parse_frontmatter};
 use include_dir::{include_dir, Dir};
 use serde::{Deserialize, Serialize};
 
 static POSTS_DIR: Dir<'_> = include_dir!("posts");
 
+/// Metadata for a blog post.
 #[derive(Clone, Serialize, Deserialize, Debug, PartialEq)]
 pub struct PostMeta {
     #[serde(default)]
@@ -16,6 +18,7 @@ pub struct PostMeta {
     pub tags: Vec<String>,
 }
 
+/// A complete blog post including metadata and markdown content.
 #[derive(Clone, Debug, PartialEq)]
 pub struct Post {
     pub meta: PostMeta,
@@ -24,31 +27,24 @@ pub struct Post {
 
 impl Post {
     pub fn get_read_time(&self) -> String {
-        let words = self.content.split_whitespace().count();
-        let minutes = (words as f32 / 200.0).ceil() as u32;
-        if minutes <= 1 {
-            "1 min read".to_string()
-        } else {
-            format!("{} min read", minutes)
-        }
+        shared_get_read_time(&self.content)
     }
 }
 
+/// Retrieves all blog posts metadata, sorted by date descending.
 pub fn get_all_posts() -> Vec<PostMeta> {
     let mut posts = Vec::new();
 
     for entry in POSTS_DIR.files() {
         if let Some(content) = entry.contents_utf8() {
-            if let Ok(post) = parse_markdown(
-                content,
-                entry
-                    .path()
-                    .file_stem()
-                    .unwrap()
-                    .to_str()
-                    .unwrap()
-                    .to_string(),
-            ) {
+            let id = entry
+                .path()
+                .file_stem()
+                .and_then(|s| s.to_str())
+                .unwrap_or("unknown")
+                .to_string();
+
+            if let Ok(post) = parse_markdown(content, id) {
                 posts.push(post.meta);
             }
         }
@@ -84,24 +80,12 @@ pub fn get_post_by_id(id: &str) -> Option<Post> {
 }
 
 fn parse_markdown(content: &str, id: String) -> Result<Post, String> {
-    if !content.starts_with("---") {
-        return Err("No frontmatter found".to_string());
-    }
-
-    let parts: Vec<&str> = content.splitn(3, "---").collect();
-    if parts.len() < 3 {
-        return Err("Invalid frontmatter format".to_string());
-    }
-
-    let yaml = parts[1];
-    let markdown = parts[2];
-
-    let mut meta: PostMeta = serde_yaml::from_str(yaml).map_err(|e| e.to_string())?;
+    let (mut meta, markdown): (PostMeta, &str) = parse_frontmatter(content)?;
     meta.id = id;
 
     Ok(Post {
         meta,
-        content: markdown.trim().to_string(),
+        content: markdown.to_string(),
     })
 }
 
