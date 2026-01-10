@@ -1,5 +1,5 @@
 // Forces recompilation to refresh included files
-use crate::content::{get_read_time as shared_get_read_time, parse_frontmatter};
+use crate::data::utils::{get_read_time as shared_get_read_time, parse_frontmatter};
 use include_dir::{include_dir, Dir};
 use serde::{Deserialize, Serialize};
 

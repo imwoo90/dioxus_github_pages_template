@@ -2,8 +2,8 @@ use crate::components::{
     BlogCategories, BlogHero, BlogSearch, Card, Comment, Comments, Container, Hero, Section,
     ShareButtons,
 };
+use crate::data::posts::{get_all_categories, get_all_posts, get_post_by_id, markdown_to_html};
 use crate::hooks::use_syntax_highlighting;
-use crate::posts::{get_all_categories, get_all_posts, get_post_by_id, markdown_to_html};
 use crate::views::Footer;
 use crate::Route;
 use dioxus::prelude::*;

@@ -1,6 +1,6 @@
 use crate::components::*;
-use crate::posts::get_all_posts;
-use crate::projects_data::get_all_projects;
+use crate::data::posts::get_all_posts;
+use crate::data::projects::get_all_projects;
 use crate::views::Footer;
 use crate::Route;
 use dioxus::prelude::*;

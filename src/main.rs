@@ -3,10 +3,8 @@ use dioxus::prelude::*;
 use views::{About, BlogList, BlogPost, Contact, Home, Navbar, NotFound, ProjectDetail, Projects};
 
 mod components;
-mod content;
+mod data;
 mod hooks;
-mod posts;
-mod projects_data;
 mod views;
 
 #[derive(Debug, Clone, Routable, PartialEq)]

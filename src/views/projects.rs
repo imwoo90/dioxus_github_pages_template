@@ -1,9 +1,9 @@
 use crate::components::{
     BlogHero, CallToAction, Card, Comment, Comments, Container, Hero, Section,
 };
+use crate::data::posts::markdown_to_html;
+use crate::data::projects::{get_all_projects, get_project_by_id};
 use crate::hooks::use_syntax_highlighting;
-use crate::posts::markdown_to_html;
-use crate::projects_data::{get_all_projects, get_project_by_id};
 use crate::views::Footer;
 use crate::Route;
 use dioxus::prelude::*;
