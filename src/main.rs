@@ -34,11 +34,51 @@ enum Route {
     NotFound { segments: Vec<String> },
 }
 
+// The server function at the endpoint "static_routes" will be called by the CLI to generate the list of static
+// routes. You must explicitly set the endpoint to `"static_routes"` in the server function attribute instead of
+// the default randomly generated endpoint.
+#[server(endpoint = "static_routes", output = server_fn::codec::Json)]
+async fn static_routes() -> Result<Vec<String>, ServerFnError> {
+    let mut routes = Route::static_routes()
+        .iter()
+        .map(|r| r.to_string())
+        .collect::<Vec<_>>();
+
+    // Add dynamic routes that you want to pre-render
+    routes.push(
+        Route::BlogPost {
+            id: "post-1".to_string(),
+        }
+        .to_string(),
+    );
+
+    Ok(routes)
+}
+
 const FAVICON: Asset = asset!("/assets/favicon.ico");
 const MAIN_CSS: Asset = asset!("assets/tailwind.css");
 
 fn main() {
-    dioxus::launch(App);
+    dioxus::LaunchBuilder::new()
+        // Set the server config only if we are building the server target
+        .with_cfg(server_only! {
+            ServeConfig::builder()
+                // Enable incremental rendering
+                .incremental(
+                    dioxus::server::IncrementalRendererConfig::new()
+                        // Store static files in the public directory
+                        .static_dir(
+                            std::env::current_exe()
+                                .unwrap()
+                                .parent()
+                                .unwrap()
+                                .join("public")
+                        )
+                        .clear_cache(false)
+                )
+                .enable_out_of_order_streaming()
+        })
+        .launch(App);
 }
 
 /// Detect initial theme (Pure Rust abstraction)
@@ -61,6 +101,7 @@ fn get_initial_theme() -> bool {
 }
 
 /// Sync theme to storage and document root (Pure Rust abstraction)
+#[allow(unused_variables)]
 fn sync_theme(is_dark: bool) {
     #[cfg(target_arch = "wasm32")]
     {
