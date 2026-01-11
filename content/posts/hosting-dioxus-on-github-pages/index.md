@@ -3,7 +3,7 @@ title: "Building a Rust Blog on GitHub Pages with Dioxus"
 date: "2026-01-11"
 author: "imwoo90"
 description: "A comprehensive guide on how we built this Rust-powered blog and deployed it to GitHub Pages using Dioxus and GitHub Actions."
-image_url: "/my_blog/content/posts/hosting-dioxus-on-github-pages/dioxus_gh_pages_hosting.png"
+image_url: "dioxus_gh_pages_hosting.png"
 tags: ["rust", "dioxus", "github-pages", "tutorial"]
 ---
 
