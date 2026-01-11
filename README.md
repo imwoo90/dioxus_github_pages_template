@@ -1,5 +1,5 @@
 # Rust & Dioxus Blog for GitHub Pages
-
+([this github pages](https://imwoo90.github.io/dioxus_github_pages_template/))
 A high-performance, developer-centric blog template built with Rust and Dioxus, optimized for seamless deployment on GitHub Pages.
 
 ## 🚀 Features
@@ -13,6 +13,16 @@ A high-performance, developer-centric blog template built with Rust and Dioxus, 
 -   **Dynamic SEO**: Automatically updates browser titles and meta tags for each post.
 -   **Theme Switching**: Support for Light/Dark mode based on user preference or system settings.
 -   **Automated Deployment**: Built-in CI/CD with GitHub Actions, tailored for Dioxus 0.7 bundle structure.
+-   **No Jekyll**: Automatic `.nojekyll` generation for GitHub Pages compatibility.
+
+## 🏗️ Architecture Highlights
+
+This template isn't just a static site; it's a **hybrid dynamic-static blog** designed to overcome GitHub Pages limitations:
+
+1.  **Zero-Build Content Updates**: Unlike many SSGs, you don't *have* to rebuild the entire Rust binary to add a post. The app fetches Markdown files directly from the `public/` folder at runtime using `gloo-net`.
+2.  **Smart Indexing**: A custom `build.rs` script runs at compile time to scan your `public/content/` folders. It generates JSON index files that the frontend uses to list posts and projects without needing a backend API.
+3.  **Automatic Path Adaptation**: One of the biggest pain points of GitHub Pages is the `/repo-name/` subpath. This template includes a CI/CD pipeline that automatically detects your repository name and injects it into the build, ensuring all links and assets work out of the box.
+4.  **Type-Safe Styling**: Tailwind CSS is integrated directly into the build process, giving you the best of modern CSS with Rust's safety.
 
 ## 🛠 Tech Stack
 
