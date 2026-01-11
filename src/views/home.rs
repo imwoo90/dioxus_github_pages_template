@@ -1,6 +1,7 @@
 use crate::components::*;
 use crate::data::blog::get_all_posts;
 use crate::data::projects::get_all_projects;
+use crate::data::utils::get_base_path;
 use crate::views::Footer;
 use crate::Route;
 use dioxus::prelude::*;
@@ -20,7 +21,7 @@ pub fn Home() -> Element {
                     Card {
                         title: post.title.clone(),
                         description: post.description.clone(),
-                        image_url: post.image_url.clone(),
+                        image_url: format!("{}/{}", get_base_path(), post.image_url),
                         tags: post.tags.clone(),
                         link_to: Route::BlogPost {
                             id: post.id.clone(),
@@ -36,7 +37,7 @@ pub fn Home() -> Element {
                     Card {
                         title: project.title.clone(),
                         description: project.description.clone(),
-                        image_url: project.image_url.clone(),
+                        image_url: format!("{}/{}", get_base_path(), project.image_url),
                         tags: project.tags.clone(),
                         link_to: Route::ProjectPost {
                             id: project.id.clone(),
