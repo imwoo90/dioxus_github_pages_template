@@ -28,13 +28,15 @@ jobs:
 
       - name: Build with Dioxus
         run: |
-          dx build --release
+          # Use dx bundle with --out-dir for a predictable output location
+          # This works regardless of the base_path setting
+          dx bundle --release --platform web --out-dir dist
 
       - name: Post Build Adjustments
         run: |
-          # Dioxus 0.7 build output is in dist/
+          # Dioxus 0.7 web bundle puts assets in [out-dir]/public/
           mkdir -p docs
-          cp -r dist/* docs/
+          cp -r dist/public/* docs/
           
           # Disable Jekyll processing for GitHub Pages
           touch docs/.nojekyll

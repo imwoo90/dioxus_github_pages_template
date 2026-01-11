@@ -59,7 +59,10 @@ pub fn markdown_to_html(markdown: &str, post_id: &str, content_type: &str) -> St
 
             if !new_dest.starts_with("http") && !new_dest.starts_with("/") {
                 let clean_path = new_dest.trim_start_matches("./");
-                new_dest = format!("content/{}/{}/{}", content_type, post_id, clean_path);
+                new_dest = format!(
+                    "/my_blog/content/{}/{}/{}",
+                    content_type, post_id, clean_path
+                );
             }
 
             Event::Start(Tag::Image {

@@ -51,7 +51,7 @@ pub fn get_all_categories() -> Vec<String> {
 }
 
 pub async fn get_project_by_id(id: &str) -> Option<Project> {
-    let url = format!("content/projects/{}/index.md", id);
+    let url = format!("/my_blog/content/projects/{}/index.md", id);
     let content = match gloo_net::http::Request::get(&url).send().await {
         Ok(resp) => resp.text().await.ok()?,
         Err(_) => return None,
