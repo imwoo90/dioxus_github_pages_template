@@ -4,36 +4,46 @@ A high-performance, developer-centric blog template built with Rust and Dioxus, 
 
 ## 🚀 Features
 
--   **Rust & Dioxus**: Built on [Dioxus](https://dioxuslabs.com/), a type-safe and performant frontend framework.
+-   **Rust & Dioxus**: Built on [Dioxus 0.7+](https://dioxuslabs.com/), a type-safe and performant frontend framework.
 -   **Wasm-Powered**: Runs directly in the browser using WebAssembly for a near-native experience.
--   **Markdown Support**: Content managed via Markdown files in `posts/` and `projects/` using `pulldown-cmark`.
+-   **Dynamic Content Management**: Supports folder-based Markdown content fetching at runtime via `gloo-net`.
+-   **Automatic Indexing**: A robust `build.rs` script automatically generates metadata indexes (`posts_index.json`, `projects_index.json`) for seamless discovery.
+-   **Local Image Support**: Content-specific images are managed alongside Markdown files in dedicated folders.
 -   **Tailwind CSS**: Modern, responsive design system.
 -   **Theme Switching**: Support for Light/Dark mode based on user preference or system settings.
--   **Automated Deployment**: Built-in CI/CD with GitHub Actions.
+-   **Automated Deployment**: Built-in CI/CD with GitHub Actions, tailored for Dioxus 0.7 bundle structure.
 
 ## 🛠 Tech Stack
 
 -   **Language**: Rust
 -   **Frontend**: Dioxus (Web platform)
 -   **Styling**: Tailwind CSS
--   **Content**: Markdown
+-   **Content**: Markdown (`pulldown-cmark`)
+-   **Fetching**: `gloo-net` (Runtime async fetch)
 -   **Deployment**: GitHub Actions & GitHub Pages
 
 ## 📂 Project Structure
 
 ```bash
 my_blog/
-├── assets/         # Static assets like images and fonts
-├── posts/          # Markdown files for blog posts
-├── projects/       # Markdown files for project descriptions
-├── src/            # Rust source code
-│   ├── components/ # Reusable UI components
-│   ├── views/      # Page views for different routes
-│   ├── posts.rs    # Data handling and loading logic for posts
-│   └── main.rs     # Application entry point and router setup
-├── tailwind.css    # Tailwind CSS input styles
-├── Dioxus.toml     # Dioxus project configuration
-└── Cargo.toml      # Rust dependencies and build configuration
+├── public/                 # Static assets served at the root
+│   └── content/            # Dynamic content directory
+│       ├── posts/          # Blog posts (each in its own folder)
+│       │   └── post-id/
+│       │       ├── index.md
+│       │       └── image.png
+│       └── projects/       # Projects (each in its own folder)
+├── src/                    # Rust source code
+│   ├── components/         # Reusable UI components
+│   ├── data/               # Data models and fetching logic
+│   │   ├── blog.rs         # Blog-related data & logic
+│   │   ├── projects.rs     # Project-related data & logic
+│   │   └── utils.rs        # Shared utilities (Markdown parsing)
+│   ├── views/              # Page views and routing
+│   └── main.rs             # App entry point & Route definition
+├── build.rs                # Component indexing logic (generates _index.json)
+├── Dioxus.toml             # Dioxus configuration
+└── Cargo.toml              # Dependencies
 ```
 
 ## 🚀 Getting Started
@@ -70,9 +80,9 @@ dx build --release
 This project is configured for automated deployment via GitHub Actions (`.github/workflows/deploy.yml`). When you push to the `main` branch:
 
 1.  The environment is set up with Rust and Dioxus CLI.
-2.  The app is built and bundled using `dx bundle`.
-3.  The output is deployed to the `gh-pages` branch.
-4.  Since GitHub Pages hosts the site at `https://<username>.github.io/<repository_name>/`, the `base_path` ensures that all assets and routes are correctly linked.
+2.  The app is built and bundled using `dx bundle --release`.
+3.  The workflow ensures all generated content and assets in `public/` are correctly mapped to the deployment root.
+4.  The output is deployed to the `gh-pages` (or `docs/`) branch.
 
 ### ⚙️ Customization for Forks
 

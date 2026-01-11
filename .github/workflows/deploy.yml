@@ -28,12 +28,18 @@ jobs:
 
       - name: Build with Dioxus
         run: |
-          dx bundle --out-dir docs
+          dx build --release
 
       - name: Post Build Adjustments
         run: |
-          mv docs/public/* docs/
-
+          # Dioxus 0.7 build output is in dist/
+          mkdir -p docs
+          cp -r dist/* docs/
+          
+          # Disable Jekyll processing for GitHub Pages
+          touch docs/.nojekyll
+          
+          # Support SPA routing on refresh
           cp docs/index.html docs/404.html
 
       - name: Deploy to GitHub Pages

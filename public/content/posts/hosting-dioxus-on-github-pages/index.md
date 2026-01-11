@@ -35,15 +35,16 @@ Jules took the design output from Stitch and intelligently **merged** the layout
 ## 🤖 Phase 4: Refinement with Antigravity
 
 With the design-driven code in place, I turned to **Antigravity**. As a powerful agentic AI coding assistant, Antigravity handled the heavy lifting of the application's core logic:
-- **Markdown Architecture**: Implementing a system to parse files using `pulldown-cmark`.
-- **Dynamic Routing**: Crafting a seamless SPA experience for blog and project details.
-- **Interactivity**: Adding that "premium" feel through smooth transitions and responsive components.
+-   **Dynamic Content Architecture**: Transitioning from static embedding (`include_dir!`) to a scalable folder-based system.
+-   **Automated Indexing**: Implementing a `build.rs` script that scans `public/content/` and generates JSON metadata indexes at compile time.
+-   **Runtime Fetching**: Using `gloo-net` to asynchronously fetch Markdown content only when a user navigates to a specific post.
+-   **Image Resolution**: Crafting a custom Markdown-to-HTML pipeline that automatically resolves relative image paths inside post folders to their correct URLs on GitHub Pages.
 
 ---
 
 ## 🚀 Phase 5: Hosting on GitHub Pages
 
-The final step was ensuring the world could see it. Here is how we handled the technical requirements for GitHub Pages:
+The final step was ensuring the world could see it. We refined the deployment workflow to handle the technical requirements of GitHub Pages and Dioxus 0.7:
 
 ### 1. The `base_path` Configuration
 Crucial for GitHub's subpath hosting (`username.github.io/repo/`):
@@ -52,11 +53,11 @@ Crucial for GitHub's subpath hosting (`username.github.io/repo/`):
 base_path = "your_repo_name"
 ```
 
-### 2. Solving the SPA Refresh Bug
-Standard static hosts fail on refreshes for non-root routes. We fix this by duplicating our entry point in the deployment script:
-```bash
-cp docs/index.html docs/404.html
-```
+### 2. Serving through `public/`
+By moving our content to the `public/` directory, we ensure that `dx serve` and `dx bundle` treat our Markdown and images as root-level assets, making them easily fetchable by the Wasm binary.
+
+### 3. Automated CI/CD
+Our GitHub Actions workflow handles the `dx bundle --release` process and ensures that the generated `docs/` or `gh-pages` branch contains a `404.html` (copied from `index.html`) to support client-side routing.
 
 ---
 

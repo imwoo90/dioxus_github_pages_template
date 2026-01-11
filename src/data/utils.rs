@@ -48,8 +48,6 @@ pub fn markdown_to_html(markdown: &str, post_id: &str, content_type: &str) -> St
     options.insert(Options::ENABLE_FOOTNOTES);
     options.insert(Options::ENABLE_TASKLISTS);
 
-    let base_path = "/my_blog";
-
     let parser = Parser::new_ext(markdown, options).map(|event| match event {
         Event::Start(Tag::Image {
             link_type,
@@ -61,10 +59,7 @@ pub fn markdown_to_html(markdown: &str, post_id: &str, content_type: &str) -> St
 
             if !new_dest.starts_with("http") && !new_dest.starts_with("/") {
                 let clean_path = new_dest.trim_start_matches("./");
-                new_dest = format!(
-                    "{}/content/{}/{}/{}",
-                    base_path, content_type, post_id, clean_path
-                );
+                new_dest = format!("content/{}/{}/{}", content_type, post_id, clean_path);
             }
 
             Event::Start(Tag::Image {
