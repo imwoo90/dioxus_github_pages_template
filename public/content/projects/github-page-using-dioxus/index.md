@@ -17,10 +17,11 @@ This project is a modern, developer-centric blog and portfolio template. It leve
 
 - **Blazing Fast**: Compiles to WebAssembly (Wasm) for near-native performance in the browser.
 - **Type-Safe**: Developed entirely in Rust, ensuring memory safety and robustness.
-- **Markdown-Driven**: Posts and projects are managed through static Markdown files, making content updates simple and git-friendly.
+- **Dynamic Content Architecture**: Content is fetched at runtime using `gloo-net`, moving away from static embedding for better scalability.
+- **Automated Indexing**: A `build.rs` script scans the content directory to automatically generate metadata indexes at compile time.
 - **Automated Deployment**: Includes a battle-tested GitHub Actions workflow for automatic building and deployment.
 - **Responsive Design**: Styled with Tailwind CSS for a clean, modern, and mobile-friendly UI.
-- **SEO Optimized**: Built-in support for meta tags and semantic HTML.
+- **Smart Pathing**: Dynamically detects the base path from the browser's `<base>` tag for environment-agnostic resource loading.
 
 ## Why Dioxus?
 
