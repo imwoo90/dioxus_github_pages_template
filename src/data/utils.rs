@@ -69,15 +69,18 @@ pub fn markdown_to_html(markdown: &str, post_id: &str, content_type: &str) -> St
     options.insert(Options::ENABLE_TASKLISTS);
 
     let parser = Parser::new_ext(markdown, options).map(|event| match event {
-        Event::Start(Tag::Image {
+        Event::Start(Tag::Link {
             link_type,
             dest_url,
             title,
             id,
         }) => {
             let mut new_dest = dest_url.to_string();
-
-            if !new_dest.starts_with("http") && !new_dest.starts_with("/") {
+            if new_dest.starts_with('/') {
+                // Case 1: Root-relative path (e.g., "/about")
+                new_dest = format!("{}{}", get_base_path(), new_dest);
+            } else if !new_dest.starts_with("http") {
+                // Case 2: Relative path to the current directory (e.g., "next-post.md")
                 let clean_path = new_dest.trim_start_matches("./");
                 new_dest = format!(
                     "{}/content/{}/{}/{}",
@@ -87,6 +90,38 @@ pub fn markdown_to_html(markdown: &str, post_id: &str, content_type: &str) -> St
                     clean_path
                 );
             }
+            // Case 3: External URL - leave as is
+
+            Event::Start(Tag::Link {
+                link_type,
+                dest_url: new_dest.into(),
+                title,
+                id,
+            })
+        }
+        Event::Start(Tag::Image {
+            link_type,
+            dest_url,
+            title,
+            id,
+        }) => {
+            let mut new_dest = dest_url.to_string();
+
+            if new_dest.starts_with('/') {
+                // Case 1: Root-relative path (e.g., "/assets/logo.png")
+                new_dest = format!("{}{}", get_base_path(), new_dest);
+            } else if !new_dest.starts_with("http") {
+                // Case 2: Relative path to the post/project folder (e.g., "thumbnail.png")
+                let clean_path = new_dest.trim_start_matches("./");
+                new_dest = format!(
+                    "{}/content/{}/{}/{}",
+                    get_base_path(),
+                    content_type,
+                    post_id,
+                    clean_path
+                );
+            }
+            // Case 3: External URL (starts with http) - leave as is
 
             Event::Start(Tag::Image {
                 link_type,

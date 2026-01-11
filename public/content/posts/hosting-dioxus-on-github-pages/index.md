@@ -35,7 +35,7 @@ Jules took the design output from Stitch and intelligently **merged** the layout
 ## 🤖 Phase 4: Refinement with Antigravity
 
 With the design-driven code in place, I turned to **Antigravity**. As a powerful agentic AI coding assistant, Antigravity handled the heavy lifting of the application's core logic:
--   **Dynamic Content Architecture**: Transitioning from static embedding (`include_dir!`) to a scalable folder-based system.
+-   **Dynamic Content Architecture**: Implementing a scalable folder-based system with runtime fetching.
 -   **Automated Indexing**: Implementing a `build.rs` script that scans `public/content/` and generates JSON metadata indexes at compile time.
 -   **Runtime Fetching**: Using `gloo-net` to asynchronously fetch Markdown content only when a user navigates to a specific post.
 -   **Image Resolution**: Crafting a custom Markdown-to-HTML pipeline that automatically resolves relative image paths inside post folders to their correct URLs on GitHub Pages.
