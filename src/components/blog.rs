@@ -62,14 +62,21 @@ pub fn BlogCategories(categories: Vec<String>, active: String) -> Element {
 }
 
 #[component]
-pub fn BlogHero(title: String, author: String, date: String, read_time: String) -> Element {
+pub fn EntryHero(
+    title: String,
+    author: String,
+    date: String,
+    read_time: String,
+    back_link: Route,
+    back_label: String,
+) -> Element {
     rsx! {
         header { class: "flex flex-col gap-6 border-b border-text-dark/5 dark:border-white/5 pb-10",
             div { class: "flex items-center gap-2 text-sm text-text-dark/60 dark:text-gray-500 font-medium",
                 Link {
                     class: "hover:text-primary-light transition-colors",
-                    to: Route::BlogList {},
-                    "Blog"
+                    to: back_link,
+                    "{back_label}"
                 }
                 span { "›" }
                 span { class: "truncate text-text-dark/40 dark:text-gray-400", "{title}" }

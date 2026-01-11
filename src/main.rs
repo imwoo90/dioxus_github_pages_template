@@ -1,6 +1,6 @@
 // Main entry point for the Dioxus blog application
 use dioxus::prelude::*;
-use views::{About, BlogList, BlogPost, Contact, Home, Navbar, NotFound, ProjectDetail, Projects};
+use views::{About, BlogList, BlogPost, Contact, Home, Navbar, NotFound, ProjectList, ProjectPost};
 
 mod components;
 mod data;
@@ -20,10 +20,10 @@ enum Route {
     BlogPost { id: String },
 
     #[route("/projects")]
-    Projects {},
+    ProjectList {},
 
     #[route("/projects/:id")]
-    ProjectDetail { id: String },
+    ProjectPost { id: String },
 
     #[route("/about")]
     About {},

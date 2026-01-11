@@ -22,7 +22,7 @@ pub fn Footer() -> Element {
                     }
                     Link {
                         class: "hover:text-primary-light transition-all hover:-translate-y-0.5",
-                        to: Route::Projects {},
+                        to: Route::ProjectList {},
                         "Projects"
                     }
                     Link {
