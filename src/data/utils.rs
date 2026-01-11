@@ -1,6 +1,26 @@
 use pulldown_cmark::{html, Event, Options, Parser, Tag};
 use serde::{Deserialize, Serialize};
 
+/// Dynamically detects the base path from the <base> tag in the HTML.
+/// This allows the same code to work in both local 'dx serve' (usually /)
+/// and GitHub Pages (usually /my_blog/).
+pub fn get_base_path() -> String {
+    #[cfg(target_arch = "wasm32")]
+    {
+        if let Some(window) = web_sys::window() {
+            if let Some(document) = window.document() {
+                if let Ok(Some(base_element)) = document.query_selector("base") {
+                    if let Some(href) = base_element.get_attribute("href") {
+                        // href is often "/my_blog/" - we want to trim the trailing slash
+                        return href.trim_end_matches('/').to_string();
+                    }
+                }
+            }
+        }
+    }
+    "".to_string()
+}
+
 #[derive(Clone, Serialize, Deserialize, Debug, PartialEq)]
 pub struct CommonMeta {
     #[serde(default)]
@@ -60,8 +80,11 @@ pub fn markdown_to_html(markdown: &str, post_id: &str, content_type: &str) -> St
             if !new_dest.starts_with("http") && !new_dest.starts_with("/") {
                 let clean_path = new_dest.trim_start_matches("./");
                 new_dest = format!(
-                    "/my_blog/content/{}/{}/{}",
-                    content_type, post_id, clean_path
+                    "{}/content/{}/{}/{}",
+                    get_base_path(),
+                    content_type,
+                    post_id,
+                    clean_path
                 );
             }
 

@@ -3,7 +3,7 @@ use crate::components::{
     ShareButtons,
 };
 use crate::data::blog::{get_all_categories, get_all_posts, get_post_by_id};
-use crate::data::utils::markdown_to_html;
+use crate::data::utils::{get_base_path, markdown_to_html};
 use crate::hooks::use_syntax_highlighting;
 use crate::views::Footer;
 use crate::Route;
@@ -35,7 +35,7 @@ pub fn BlogList() -> Element {
                         Card {
                             title: post.title.clone(),
                             description: post.description.clone(),
-                            image_url: post.image_url.clone(),
+                            image_url: format!("{}/{}", get_base_path(), post.image_url),
                             tags: post.tags.clone(),
                             link_to: Route::BlogPost {
                                 id: post.id.clone(),

@@ -91,6 +91,13 @@ fn parse_post_meta(content: &str, id: &str) -> Option<PostMeta> {
     let yaml = parts[1];
     let mut meta: PostMeta = serde_yaml::from_str(yaml).ok()?;
     meta.id = id.to_string();
+
+    // Resolve relative image_url
+    if !meta.image_url.starts_with("http") && !meta.image_url.starts_with("/") {
+        let clean_img = meta.image_url.trim_start_matches("./");
+        meta.image_url = format!("content/posts/{}/{}", id, clean_img);
+    }
+
     Some(meta)
 }
 
@@ -102,5 +109,12 @@ fn parse_project_meta(content: &str, id: &str) -> Option<ProjectMeta> {
     let yaml = parts[1];
     let mut meta: ProjectMeta = serde_yaml::from_str(yaml).ok()?;
     meta.id = id.to_string();
+
+    // Resolve relative image_url
+    if !meta.image_url.starts_with("http") && !meta.image_url.starts_with("/") {
+        let clean_img = meta.image_url.trim_start_matches("./");
+        meta.image_url = format!("content/projects/{}/{}", id, clean_img);
+    }
+
     Some(meta)
 }
