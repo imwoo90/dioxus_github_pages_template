@@ -83,4 +83,6 @@ This workflow allows a single developer to build state-of-the-art applications w
 
 This blog is more than a place for my thoughts; it's a testament to the future of software development. By combining **Rust's raw power** with **AI's creative speed**, we can reach new horizons in web development.
 
+If you're interested in building a similar blog, check out the **[GitHub Page using Dioxus](/projects/github-page-using-dioxus)** project page for the template and deployment details.
+
 Happy coding!

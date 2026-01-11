@@ -3,7 +3,7 @@ use crate::components::{
     Section,
 };
 use crate::data::projects::{get_all_categories, get_all_projects, get_project_by_id};
-use crate::data::utils::markdown_to_html;
+use crate::data::utils::{get_base_path, markdown_to_html};
 use crate::hooks::use_syntax_highlighting;
 use crate::views::Footer;
 use crate::Route;
@@ -36,7 +36,7 @@ pub fn ProjectList() -> Element {
                             Card {
                                 title: project.title.clone(),
                                 description: project.description.clone(),
-                                image_url: project.image_url.clone(),
+                                image_url: format!("{}/{}", get_base_path(), project.image_url),
                                 tags: project.tags.clone(),
                                 link_text: project.link_text.clone().unwrap_or_else(|| "View Details".to_string()),
                                 external_link: if project.route.is_none() && project.link.is_some() { project.link.clone().unwrap_or_else(|| "#".to_string()) } else { "".to_string() },
