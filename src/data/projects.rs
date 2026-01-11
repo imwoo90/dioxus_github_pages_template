@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 
 const PROJECTS_INDEX: &str = include_str!("../../public/content/projects_index.json");
 
+/// Metadata for a project, parsed from Markdown frontmatter.
 #[derive(Clone, Serialize, Deserialize, Debug, PartialEq)]
 pub struct ProjectMeta {
     #[serde(default)]
@@ -18,6 +19,7 @@ pub struct ProjectMeta {
     pub route: Option<String>,
 }
 
+/// A complete project entry including metadata and markdown content.
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Project {
     pub meta: ProjectMeta,
@@ -25,11 +27,13 @@ pub struct Project {
 }
 
 impl Project {
+    /// Calculates the estimated read time for the project content.
     pub fn get_read_time(&self) -> String {
         crate::data::utils::get_read_time(&self.content)
     }
 }
 
+/// Retrieves all projects metadata, sorted by date descending.
 pub fn get_all_projects() -> Vec<ProjectMeta> {
     let mut projects: Vec<ProjectMeta> = serde_json::from_str(PROJECTS_INDEX).unwrap_or_default();
     // Sort by date descending
@@ -37,6 +41,7 @@ pub fn get_all_projects() -> Vec<ProjectMeta> {
     projects
 }
 
+/// Retrieves all unique categories (tags) from all projects.
 pub fn get_all_categories() -> Vec<String> {
     let projects = get_all_projects();
     let mut categories = std::collections::HashSet::new();
@@ -50,6 +55,7 @@ pub fn get_all_categories() -> Vec<String> {
     categories
 }
 
+/// Fetches a specific project by its ID from the server.
 pub async fn get_project_by_id(id: &str) -> Option<Project> {
     let url = format!("{}/content/projects/{}/index.md", get_base_path(), id);
     let content = match gloo_net::http::Request::get(&url).send().await {

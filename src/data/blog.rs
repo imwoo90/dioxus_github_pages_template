@@ -24,6 +24,7 @@ pub struct Post {
 }
 
 impl Post {
+    /// Calculates the estimated read time for the post content.
     pub fn get_read_time(&self) -> String {
         crate::data::utils::get_read_time(&self.content)
     }
@@ -37,6 +38,7 @@ pub fn get_all_posts() -> Vec<PostMeta> {
     posts
 }
 
+/// Retrieves all unique categories (tags) from all blog posts.
 pub fn get_all_categories() -> Vec<String> {
     let posts = get_all_posts();
     let mut categories = std::collections::HashSet::new();
@@ -50,6 +52,7 @@ pub fn get_all_categories() -> Vec<String> {
     categories
 }
 
+/// Fetches a specific blog post by its ID from the server.
 pub async fn get_post_by_id(id: &str) -> Option<Post> {
     let url = format!("{}/content/posts/{}/index.md", get_base_path(), id);
     let content = match gloo_net::http::Request::get(&url).send().await {

@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 
 /// Dynamically detects the base path from the <base> tag in the HTML.
 /// This allows the same code to work in both local 'dx serve' (usually /)
-/// and GitHub Pages (usually /my_blog/).
+/// and GitHub Pages (usually /repo_name/).
 pub fn get_base_path() -> String {
     #[cfg(target_arch = "wasm32")]
     {
@@ -11,7 +11,7 @@ pub fn get_base_path() -> String {
             if let Some(document) = window.document() {
                 if let Ok(Some(base_element)) = document.query_selector("base") {
                     if let Some(href) = base_element.get_attribute("href") {
-                        // href is often "/my_blog/" - we want to trim the trailing slash
+                        // href is often "/repo_name/" - we want to trim the trailing slash
                         return href.trim_end_matches('/').to_string();
                     }
                 }

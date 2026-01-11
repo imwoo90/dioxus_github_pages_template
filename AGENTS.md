@@ -263,3 +263,40 @@ The initial UI rendered by the component on the client must be identical to the 
 
 * Use the `use_server_future` hook instead of `use_resource`. It runs the future on the server, serializes the result, and sends it to the client, ensuring the client has the data immediately for its first render.
 * Any code that relies on browser-specific APIs (like accessing `localStorage`) must be run *after* hydration. Place this code inside a `use_effect` hook.
+
+---
+
+# 🎯 My Blog Project Specifics
+
+This project uses a custom architecture for dynamic content and deployment on GitHub Pages. Follow these rules strictly.
+
+## 🔗 Dynamic Path Resolution (Critical)
+To support GitHub Pages subpaths (e.g., `/my_blog/`) without hardcoding paths:
+- **Rule**: Use `crate::data::utils::get_base_path()` for ALL resource fetching and relative asset paths.
+- **Why**: It reads the `<base href="...">` tag injected during CI. Prepend it to any absolute-like paths.
+
+```rust
+// ✅ CORRECT: Prepend get_base_path()
+let url = format!("{}/content/posts/{}/index.md", get_base_path(), id);
+let img_src = format!("{}/{}", get_base_path(), post.image_url);
+
+// ❌ INCORRECT (Will fail on GitHub Pages)
+let url = format!("content/posts/{}/index.md", id);
+```
+
+## 📂 Dynamic Content & Indexing
+- **Storage**: Markdown content is stored in `public/content/{type}/{id}/index.md`.
+- **Fetching**: Content is NOT bundled. Use `gloo-net` to fetch `.md` files at runtime.
+- **Automation**: `build.rs` automatically scans content and generates `posts_index.json` / `projects_index.json`. 
+- **Image Co-location**: Place images in the same folder as the `index.md`. Reference them by filename; `build.rs` will resolve them.
+
+## 🎨 Component & SEO Patterns
+- **SEO Title**: Use `document::Title { "{page_name} - Rust's Horizon" }` in every view for dynamic browser tab titles.
+- **Markdown Rendering**: Use `crate::data::utils::markdown_to_html(content, id, type)` for professional rendering with syntax highlighting and image resolution.
+- **Shared Layouts**: Use `EntryHero` as the standard header for both blog and project post views.
+
+## 📡 Async Resource Handling
+Always handle the three states of a `use_resource`:
+1. `None`: Return a loading spinner/skeleton.
+2. `Some(None)`: Return a 404/Not Found UI.
+3. `Some(Some(data))`: Render the actual content.

@@ -68,6 +68,7 @@ pub fn ProjectPost(id: String) -> Element {
             let html_content = markdown_to_html(&project.content, &project.meta.id, "projects");
 
             rsx! {
+                document::Title { "{project.meta.title} - Rust's Horizon" }
                 div { class: "layout-content-container flex flex-col w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16",
                     article { class: "w-full max-w-3xl flex flex-col gap-10",
                         EntryHero {

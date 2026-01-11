@@ -42,22 +42,31 @@ With the design-driven code in place, I turned to **Antigravity**. As a powerful
 
 ---
 
-## 🚀 Phase 5: Hosting on GitHub Pages
+## 🚀 Phase 5: Hosting on GitHub Pages (Zero-Config)
 
-The final step was ensuring the world could see it. We refined the deployment workflow to handle the technical requirements of GitHub Pages and Dioxus 0.7:
+The final step was ensuring the world could see it. We refined the deployment workflow to be completely automated, removing the need for manual path configuration:
 
-### 1. The `base_path` Configuration
-Crucial for GitHub's subpath hosting (`username.github.io/repo/`):
-```toml
-[web.app]
-base_path = "your_repo_name"
+### 1. Automated `base_path` Injection
+Instead of hardcoding the repository name in `Dioxus.toml`, our GitHub Actions workflow now detects the repo name at build time:
+```yaml
+      - name: Set Base Path
+        run: |
+          REPO_NAME=$(echo ${{ github.repository }} | cut -d'/' -f2)
+          sed -i "s/base_path = \".*\"/base_path = \"$REPO_NAME\"/" Dioxus.toml
 ```
 
-### 2. Serving through `public/`
-By moving our content to the `public/` directory, we ensure that `dx serve` and `dx bundle` treat our Markdown and images as root-level assets, making them easily fetchable by the Wasm binary.
+### 2. The `<base>` Tag Solution
+To ensure the app always knows its location, we manually inject the `<base>` tag into `index.html` during the CI process. This provides a reliable source of truth for all relative asset requests.
 
-### 3. Automated CI/CD
-Our GitHub Actions workflow handles the `dx bundle --release` process and ensures that the generated `docs/` or `gh-pages` branch contains a `404.html` (copied from `index.html`) to support client-side routing.
+### 3. Dynamic Path Detection in Rust
+In the application code, we use a robust utility to read the environment at runtime:
+```rust
+pub fn get_base_path() -> String {
+    // Reads <base href="..."> from the DOM
+    // Returns "" on localhost and "/repo_name" on GitHub Pages
+}
+```
+This synergy ensures that whether we are developing locally with `dx serve` or deploying to a subpath on GitHub, the blog always fetches the correct Markdown and images.
 
 ---
 
