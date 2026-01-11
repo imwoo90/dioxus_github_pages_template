@@ -1,8 +1,9 @@
 use crate::components::{
-    BlogCategories, BlogHero, BlogSearch, Card, Comment, Comments, Container, Hero, Section,
+    BlogCategories, BlogSearch, Card, Comment, Comments, Container, EntryHero, Hero, Section,
     ShareButtons,
 };
-use crate::data::posts::{get_all_categories, get_all_posts, get_post_by_id, markdown_to_html};
+use crate::data::blog::{get_all_categories, get_all_posts, get_post_by_id};
+use crate::data::utils::markdown_to_html;
 use crate::hooks::use_syntax_highlighting;
 use crate::views::Footer;
 use crate::Route;
@@ -50,20 +51,27 @@ pub fn BlogList() -> Element {
 
 #[component]
 pub fn BlogPost(id: String) -> Element {
-    let post = get_post_by_id(&id);
+    let post_resource = use_resource(move || {
+        let id = id.clone();
+        async move { get_post_by_id(&id).await }
+    });
+
     use_syntax_highlighting();
 
-    match post {
-        Some(post) => {
-            let html_content = markdown_to_html(&post.content);
+    let resource = post_resource.read();
+    match &*resource {
+        Some(Some(post)) => {
+            let html_content = markdown_to_html(&post.content, &post.meta.id, "posts");
             rsx! {
                 div { class: "layout-content-container flex flex-col w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16",
                     article { class: "w-full max-w-3xl flex flex-col gap-10",
-                        BlogHero {
+                        EntryHero {
                             title: post.meta.title.clone(),
                             author: post.meta.author.clone(),
                             date: post.meta.date.clone(),
                             read_time: post.get_read_time(),
+                            back_link: Route::BlogList {},
+                            back_label: "Blog".to_string(),
                         }
 
                         div {
@@ -98,7 +106,7 @@ pub fn BlogPost(id: String) -> Element {
                 Footer {}
             }
         }
-        None => rsx! {
+        Some(None) => rsx! {
             div { class: "flex flex-col items-center justify-center min-h-[60vh]",
                 h1 { class: "text-4xl font-bold", "Post Not Found" }
                 Link {
@@ -106,6 +114,13 @@ pub fn BlogPost(id: String) -> Element {
                     class: "mt-4 text-primary-light hover:underline",
                     "Back to Blog"
                 }
+            }
+            Footer {}
+        },
+        None => rsx! {
+            div { class: "flex flex-col items-center justify-center min-h-[60vh]",
+                div { class: "animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-light" }
+                p { class: "mt-4 text-text-dark/60 dark:text-text-light/60", "Loading article..." }
             }
             Footer {}
         },

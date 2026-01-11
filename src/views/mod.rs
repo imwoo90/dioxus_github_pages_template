@@ -14,4 +14,4 @@ pub use footer::Footer;
 pub use home::Home;
 pub use navbar::Navbar;
 pub use not_found::NotFound;
-pub use projects::{ProjectDetail, Projects};
+pub use projects::{ProjectList, ProjectPost};

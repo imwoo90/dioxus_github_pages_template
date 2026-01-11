@@ -1,5 +1,5 @@
 use crate::components::*;
-use crate::data::posts::get_all_posts;
+use crate::data::blog::get_all_posts;
 use crate::data::projects::get_all_projects;
 use crate::views::Footer;
 use crate::Route;
@@ -38,7 +38,7 @@ pub fn Home() -> Element {
                         description: project.description.clone(),
                         image_url: project.image_url.clone(),
                         tags: project.tags.clone(),
-                        link_to: Route::ProjectDetail {
+                        link_to: Route::ProjectPost {
                             id: project.id.clone(),
                         },
                     }

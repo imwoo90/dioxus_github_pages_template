@@ -1,15 +1,16 @@
 use crate::components::{
-    BlogHero, CallToAction, Card, Comment, Comments, Container, Hero, Section,
+    BlogCategories, BlogSearch, CallToAction, Card, Comment, Comments, Container, EntryHero, Hero,
+    Section,
 };
-use crate::data::posts::markdown_to_html;
-use crate::data::projects::{get_all_projects, get_project_by_id};
+use crate::data::projects::{get_all_categories, get_all_projects, get_project_by_id};
+use crate::data::utils::markdown_to_html;
 use crate::hooks::use_syntax_highlighting;
 use crate::views::Footer;
 use crate::Route;
 use dioxus::prelude::*;
 
 #[component]
-pub fn Projects() -> Element {
+pub fn ProjectList() -> Element {
     let projects = get_all_projects();
 
     rsx! {
@@ -19,7 +20,15 @@ pub fn Projects() -> Element {
                     title: "The Workshop",
                     subtitle: "A collection of my work, showcasing the versatility of Rust across the full stack.",
                     centered: Some(false),
-                    children: rsx! {},
+                    children: rsx! {
+                        div { class: "flex flex-col md:flex-row gap-4 w-full items-center mt-4",
+                            BlogSearch { placeholder: "Search projects..." }
+                            BlogCategories {
+                                categories: get_all_categories(),
+                                active: "All".to_string(),
+                            }
+                        }
+                    },
                 }
                 Section { class: "px-4 mb-20",
                     div { class: "grid grid-cols-1 md:grid-cols-2 gap-8",
@@ -31,7 +40,7 @@ pub fn Projects() -> Element {
                                 tags: project.tags.clone(),
                                 link_text: project.link_text.clone().unwrap_or_else(|| "View Details".to_string()),
                                 external_link: if project.route.is_none() && project.link.is_some() { project.link.clone().unwrap_or_else(|| "#".to_string()) } else { "".to_string() },
-                                link_to: Some(Route::ProjectDetail {
+                                link_to: Some(Route::ProjectPost {
                                     id: project.id.clone(),
                                 }),
                             }
@@ -45,22 +54,29 @@ pub fn Projects() -> Element {
 }
 
 #[component]
-pub fn ProjectDetail(id: String) -> Element {
-    let project = get_project_by_id(&id);
+pub fn ProjectPost(id: String) -> Element {
+    let project_resource = use_resource(move || {
+        let id = id.clone();
+        async move { get_project_by_id(&id).await }
+    });
+
     use_syntax_highlighting();
 
-    match project {
-        Some(project) => {
-            let html_content = markdown_to_html(&project.content);
+    let resource = project_resource.read();
+    match &*resource {
+        Some(Some(project)) => {
+            let html_content = markdown_to_html(&project.content, &project.meta.id, "projects");
 
             rsx! {
                 div { class: "layout-content-container flex flex-col w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16",
                     article { class: "w-full max-w-3xl flex flex-col gap-10",
-                        BlogHero {
+                        EntryHero {
                             title: project.meta.title.clone(),
                             author: project.meta.author.clone(),
                             date: project.meta.date.clone(),
                             read_time: project.get_read_time(),
+                            back_link: Route::ProjectList {},
+                            back_label: "Projects".to_string(),
                         }
 
                         div {
@@ -107,13 +123,22 @@ pub fn ProjectDetail(id: String) -> Element {
                 Footer {}
             }
         }
-        None => rsx! {
+        Some(None) => rsx! {
             div { class: "flex flex-col items-center justify-center min-h-[60vh]",
                 h1 { class: "text-4xl font-bold", "Project Not Found" }
                 Link {
-                    to: Route::Projects {},
+                    to: Route::ProjectList {},
                     class: "mt-4 text-primary-light hover:underline",
                     "Back to Projects"
+                }
+            }
+            Footer {}
+        },
+        None => rsx! {
+            div { class: "flex flex-col items-center justify-center min-h-[60vh]",
+                div { class: "animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-light" }
+                p { class: "mt-4 text-text-dark/60 dark:text-text-light/60",
+                    "Loading project info..."
                 }
             }
             Footer {}

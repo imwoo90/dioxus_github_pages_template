@@ -1,8 +1,7 @@
-use crate::data::utils::{get_read_time as shared_get_read_time, parse_frontmatter};
-use include_dir::{include_dir, Dir};
+use crate::data::utils::parse_frontmatter;
 use serde::{Deserialize, Serialize};
 
-static PROJECTS_DIR: Dir<'_> = include_dir!("projects");
+const PROJECTS_INDEX: &str = include_str!("../../public/content/projects_index.json");
 
 #[derive(Clone, Serialize, Deserialize, Debug, PartialEq)]
 pub struct ProjectMeta {
@@ -19,7 +18,7 @@ pub struct ProjectMeta {
     pub route: Option<String>,
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Project {
     pub meta: ProjectMeta,
     pub content: String,
@@ -27,49 +26,38 @@ pub struct Project {
 
 impl Project {
     pub fn get_read_time(&self) -> String {
-        shared_get_read_time(&self.content)
+        crate::data::utils::get_read_time(&self.content)
     }
 }
 
 pub fn get_all_projects() -> Vec<ProjectMeta> {
-    let mut projects = Vec::new();
-
-    for entry in PROJECTS_DIR.files() {
-        if let Some(content_str) = entry.contents_utf8() {
-            if let Ok(meta) = parse_project_meta(
-                content_str,
-                entry
-                    .path()
-                    .file_stem()
-                    .unwrap()
-                    .to_str()
-                    .unwrap()
-                    .to_string(),
-            ) {
-                projects.push(meta);
-            }
-        }
-    }
-
+    let mut projects: Vec<ProjectMeta> = serde_json::from_str(PROJECTS_INDEX).unwrap_or_default();
     // Sort by date descending
     projects.sort_by(|a, b| b.date.cmp(&a.date));
     projects
 }
 
-pub fn get_project_by_id(id: &str) -> Option<Project> {
-    for entry in PROJECTS_DIR.files() {
-        let file_id = entry.path().file_stem()?.to_str()?;
-        if file_id == id {
-            let content_str = entry.contents_utf8()?;
-            return parse_project_full(content_str, id.to_string()).ok();
+pub fn get_all_categories() -> Vec<String> {
+    let projects = get_all_projects();
+    let mut categories = std::collections::HashSet::new();
+    for project in projects {
+        for tag in project.tags {
+            categories.insert(tag);
         }
     }
-    None
+    let mut categories: Vec<String> = categories.into_iter().collect();
+    categories.sort();
+    categories
 }
 
-fn parse_project_meta(content: &str, id: String) -> Result<ProjectMeta, String> {
-    let project = parse_project_full(content, id)?;
-    Ok(project.meta)
+pub async fn get_project_by_id(id: &str) -> Option<Project> {
+    let url = format!("/my_blog/content/projects/{}/index.md", id);
+    let content = match gloo_net::http::Request::get(&url).send().await {
+        Ok(resp) => resp.text().await.ok()?,
+        Err(_) => return None,
+    };
+
+    parse_project_full(&content, id.to_string()).ok()
 }
 
 fn parse_project_full(content: &str, id: String) -> Result<Project, String> {

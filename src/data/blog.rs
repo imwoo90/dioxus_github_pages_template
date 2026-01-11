@@ -1,9 +1,7 @@
-// Forces recompilation to refresh included files
-use crate::data::utils::{get_read_time as shared_get_read_time, parse_frontmatter};
-use include_dir::{include_dir, Dir};
+use crate::data::utils::parse_frontmatter;
 use serde::{Deserialize, Serialize};
 
-static POSTS_DIR: Dir<'_> = include_dir!("posts");
+const POSTS_INDEX: &str = include_str!("../../public/content/posts_index.json");
 
 /// Metadata for a blog post.
 #[derive(Clone, Serialize, Deserialize, Debug, PartialEq)]
@@ -19,7 +17,7 @@ pub struct PostMeta {
 }
 
 /// A complete blog post including metadata and markdown content.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Post {
     pub meta: PostMeta,
     pub content: String,
@@ -27,29 +25,13 @@ pub struct Post {
 
 impl Post {
     pub fn get_read_time(&self) -> String {
-        shared_get_read_time(&self.content)
+        crate::data::utils::get_read_time(&self.content)
     }
 }
 
 /// Retrieves all blog posts metadata, sorted by date descending.
 pub fn get_all_posts() -> Vec<PostMeta> {
-    let mut posts = Vec::new();
-
-    for entry in POSTS_DIR.files() {
-        if let Some(content) = entry.contents_utf8() {
-            let id = entry
-                .path()
-                .file_stem()
-                .and_then(|s| s.to_str())
-                .unwrap_or("unknown")
-                .to_string();
-
-            if let Ok(post) = parse_markdown(content, id) {
-                posts.push(post.meta);
-            }
-        }
-    }
-
+    let mut posts: Vec<PostMeta> = serde_json::from_str(POSTS_INDEX).unwrap_or_default();
     // Sort by date descending
     posts.sort_by(|a, b| b.date.cmp(&a.date));
     posts
@@ -68,15 +50,14 @@ pub fn get_all_categories() -> Vec<String> {
     categories
 }
 
-pub fn get_post_by_id(id: &str) -> Option<Post> {
-    for entry in POSTS_DIR.files() {
-        let file_id = entry.path().file_stem()?.to_str()?;
-        if file_id == id {
-            let content = entry.contents_utf8()?;
-            return parse_markdown(content, id.to_string()).ok();
-        }
-    }
-    None
+pub async fn get_post_by_id(id: &str) -> Option<Post> {
+    let url = format!("/my_blog/content/posts/{}/index.md", id);
+    let content = match gloo_net::http::Request::get(&url).send().await {
+        Ok(resp) => resp.text().await.ok()?,
+        Err(_) => return None,
+    };
+
+    parse_markdown(&content, id.to_string()).ok()
 }
 
 fn parse_markdown(content: &str, id: String) -> Result<Post, String> {
@@ -87,11 +68,4 @@ fn parse_markdown(content: &str, id: String) -> Result<Post, String> {
         meta,
         content: markdown.to_string(),
     })
-}
-
-pub fn markdown_to_html(markdown: &str) -> String {
-    let parser = pulldown_cmark::Parser::new(markdown);
-    let mut html_output = String::new();
-    pulldown_cmark::html::push_html(&mut html_output, parser);
-    html_output
 }

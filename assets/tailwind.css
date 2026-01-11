@@ -58,6 +58,7 @@
     --radius-lg: 0.5rem;
     --radius-xl: 0.75rem;
     --radius-2xl: 1rem;
+    --animate-spin: spin 1s linear infinite;
     --animate-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     --blur-sm: 8px;
     --aspect-video: 16 / 9;
@@ -406,6 +407,9 @@
   .w-4 {
     width: calc(var(--spacing) * 4);
   }
+  .w-12 {
+    width: calc(var(--spacing) * 12);
+  }
   .w-48 {
     width: calc(var(--spacing) * 48);
   }
@@ -457,6 +461,9 @@
   }
   .animate-pulse {
     animation: var(--animate-pulse);
+  }
+  .animate-spin {
+    animation: var(--animate-spin);
   }
   .cursor-pointer {
     cursor: pointer;
@@ -574,9 +581,17 @@
     border-top-style: var(--tw-border-style);
     border-top-width: 1px;
   }
+  .border-t-2 {
+    border-top-style: var(--tw-border-style);
+    border-top-width: 2px;
+  }
   .border-b {
     border-bottom-style: var(--tw-border-style);
     border-bottom-width: 1px;
+  }
+  .border-b-2 {
+    border-bottom-style: var(--tw-border-style);
+    border-bottom-width: 2px;
   }
   .border-l-2 {
     border-left-style: var(--tw-border-style);
@@ -588,6 +603,9 @@
   }
   .border-background-light {
     border-color: var(--color-background-light);
+  }
+  .border-primary-light {
+    border-color: var(--color-primary-light);
   }
   .border-primary-light\/30 {
     border-color: color-mix(in srgb, #DEA584 30%, transparent);
@@ -1390,6 +1408,14 @@
       color: var(--color-text-light);
     }
   }
+  .dark\:text-text-light\/60 {
+    &:where(.dark, .dark *) {
+      color: color-mix(in srgb, #D4D4D4 60%, transparent);
+      @supports (color: color-mix(in lab, red, red)) {
+        color: color-mix(in oklab, var(--color-text-light) 60%, transparent);
+      }
+    }
+  }
   .dark\:text-white {
     &:where(.dark, .dark *) {
       color: var(--color-white);
@@ -1806,6 +1832,11 @@
   syntax: "*";
   inherits: false;
   initial-value: 1;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 @keyframes pulse {
   50% {

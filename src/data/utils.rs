@@ -1,3 +1,4 @@
+use pulldown_cmark::{html, Event, Options, Parser, Tag};
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Serialize, Deserialize, Debug, PartialEq)]
@@ -38,4 +39,45 @@ pub fn get_read_time(content: &str) -> String {
     } else {
         format!("{} min read", minutes)
     }
+}
+
+pub fn markdown_to_html(markdown: &str, post_id: &str, content_type: &str) -> String {
+    let mut options = Options::empty();
+    options.insert(Options::ENABLE_STRIKETHROUGH);
+    options.insert(Options::ENABLE_TABLES);
+    options.insert(Options::ENABLE_FOOTNOTES);
+    options.insert(Options::ENABLE_TASKLISTS);
+
+    let base_path = "/my_blog";
+
+    let parser = Parser::new_ext(markdown, options).map(|event| match event {
+        Event::Start(Tag::Image {
+            link_type,
+            dest_url,
+            title,
+            id,
+        }) => {
+            let mut new_dest = dest_url.to_string();
+
+            if !new_dest.starts_with("http") && !new_dest.starts_with("/") {
+                let clean_path = new_dest.trim_start_matches("./");
+                new_dest = format!(
+                    "{}/content/{}/{}/{}",
+                    base_path, content_type, post_id, clean_path
+                );
+            }
+
+            Event::Start(Tag::Image {
+                link_type,
+                dest_url: new_dest.into(),
+                title,
+                id,
+            })
+        }
+        _ => event,
+    });
+
+    let mut html_output = String::new();
+    html::push_html(&mut html_output, parser);
+    html_output
 }

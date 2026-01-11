@@ -20,7 +20,7 @@ pub fn Navbar() -> Element {
                 nav { class: "hidden md:flex items-center gap-8",
                     NavLink { to: Route::Home {}, "Home" }
                     NavLink { to: Route::BlogList {}, "Blog" }
-                    NavLink { to: Route::Projects {}, "Projects" }
+                    NavLink { to: Route::ProjectList {}, "Projects" }
                     NavLink { to: Route::About {}, "About" }
                     NavLink { to: Route::Contact {}, "Contact" }
                 }
@@ -66,7 +66,7 @@ pub fn Navbar() -> Element {
                         "Blog"
                     }
                     MobileLink {
-                        to: Route::Projects {},
+                        to: Route::ProjectList {},
                         onclick: move |_| mobile_menu_open.set(false),
                         "Projects"
                     }
@@ -118,7 +118,7 @@ fn NavLink(to: Route, children: Element) -> Element {
     // Dioxus router matching logic:
     let is_active = current_route == to
         || (to == Route::BlogList {} && matches!(current_route, Route::BlogPost { .. }))
-        || (to == Route::Projects {} && matches!(current_route, Route::ProjectDetail { .. }));
+        || (to == Route::ProjectList {} && matches!(current_route, Route::ProjectPost { .. }));
 
     let active_class = if is_active {
         "text-primary-light"
