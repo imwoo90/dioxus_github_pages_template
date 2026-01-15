@@ -1,9 +1,7 @@
-use crate::components::{
-    BlogCategories, BlogSearch, CallToAction, Card, Comment, Comments, Container, EntryHero, Hero,
-    Section,
-};
-use crate::data::projects::{get_all_categories, get_all_projects, get_project_by_id};
-use crate::data::utils::{get_base_path, markdown_to_html};
+use crate::components::{CallToAction, Comment, Comments, ContentGallery, DetailHero, GalleryItem};
+use crate::data::constants::APP_TITLE;
+use crate::data::projects::{derive_categories, fetch_all_projects, get_project_by_id};
+use crate::data::utils::markdown_to_html;
 use crate::hooks::use_syntax_highlighting;
 use crate::views::Footer;
 use crate::Route;
@@ -11,45 +9,40 @@ use dioxus::prelude::*;
 
 #[component]
 pub fn ProjectList() -> Element {
-    let projects = get_all_projects();
+    let projects_resource = use_resource(fetch_all_projects);
 
-    rsx! {
-        Container {
-            main { class: "flex flex-col gap-12 mt-8 md:mt-16",
-                Hero {
+    let projects_guard = projects_resource.read();
+
+    match &*projects_guard {
+        Some(projects) => {
+            let project_items = projects
+                .iter()
+                .map(|project| GalleryItem {
+                    id: project.id.clone(),
+                    title: project.title.clone(),
+                    description: project.description.clone(),
+                    image_url: project.image_url.clone(),
+                    tags: project.tags.clone(),
+                })
+                .collect();
+
+            rsx! {
+                ContentGallery {
                     title: "The Workshop",
-                    subtitle: "A collection of my work, showcasing the versatility of Rust across the full stack.",
-                    centered: Some(false),
-                    children: rsx! {
-                        div { class: "flex flex-col md:flex-row gap-4 w-full items-center mt-4",
-                            BlogSearch { placeholder: "Search projects..." }
-                            BlogCategories {
-                                categories: get_all_categories(),
-                                active: "All".to_string(),
-                            }
-                        }
-                    },
-                }
-                Section { class: "px-4 mb-20",
-                    div { class: "grid grid-cols-1 md:grid-cols-2 gap-8",
-                        for project in projects {
-                            Card {
-                                title: project.title.clone(),
-                                description: project.description.clone(),
-                                image_url: format!("{}/{}", get_base_path(), project.image_url),
-                                tags: project.tags.clone(),
-                                link_text: project.link_text.clone().unwrap_or_else(|| "View Details".to_string()),
-                                external_link: if project.route.is_none() && project.link.is_some() { project.link.clone().unwrap_or_else(|| "#".to_string()) } else { "".to_string() },
-                                link_to: Some(Route::ProjectPost {
-                                    id: project.id.clone(),
-                                }),
-                            }
-                        }
-                    }
+                    subtitle: "Tangible milestones of my journey—a curated collection of tools, libraries, and applications forged along the road.",
+                    search_placeholder: "Search projects...",
+                    items: project_items,
+                    categories: derive_categories(projects),
+                    route_factory: |id| Route::ProjectPost { id },
                 }
             }
         }
-        Footer {}
+        None => rsx! {
+            div { class: "flex flex-col items-center justify-center min-h-[60vh]",
+                div { class: "animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-light" }
+                p { class: "mt-4 text-text-dark/60 dark:text-text-light/60", "Loading index..." }
+            }
+        },
     }
 }
 
@@ -68,10 +61,10 @@ pub fn ProjectPost(id: String) -> Element {
             let html_content = markdown_to_html(&project.content, &project.meta.id, "projects");
 
             rsx! {
-                document::Title { "{project.meta.title} - Rust's Horizon" }
+                document::Title { "{project.meta.title} - {APP_TITLE}" }
                 div { class: "layout-content-container flex flex-col w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16",
                     article { class: "w-full max-w-3xl flex flex-col gap-10",
-                        EntryHero {
+                        DetailHero {
                             title: project.meta.title.clone(),
                             author: project.meta.author.clone(),
                             date: project.meta.date.clone(),

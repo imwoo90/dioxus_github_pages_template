@@ -1,3 +1,4 @@
+use crate::data::constants::{APP_TITLE, COPYRIGHT_YEAR, GITHUB_URL, LINKEDIN_URL};
 use crate::Route;
 use dioxus::prelude::*;
 
@@ -7,7 +8,7 @@ pub fn Footer() -> Element {
         footer { class: "mt-16 md:mt-24 py-12 border-t border-solid border-text-dark/10 dark:border-white/10 bg-background-light dark:bg-background-dark transition-colors duration-300",
             div { class: "flex flex-col md:flex-row justify-between items-center gap-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full",
                 div { class: "text-sm text-text-dark/40 dark:text-gray-500 order-3 md:order-1 font-medium",
-                    "© 2024 Rust's Horizon. All Rights Reserved."
+                    "© {COPYRIGHT_YEAR} {APP_TITLE}. All Rights Reserved."
                 }
                 nav { class: "flex flex-wrap justify-center gap-8 text-sm font-semibold text-text-dark/70 dark:text-[#D4D4D4] order-1 md:order-2",
                     Link {
@@ -40,7 +41,9 @@ pub fn Footer() -> Element {
                     a {
                         "aria-label": "GitHub Profile",
                         class: "text-text-dark/40 dark:text-gray-500 hover:text-primary-light transition-all hover:scale-110",
-                        href: "#",
+                        href: "{GITHUB_URL}",
+                        target: "_blank",
+                        rel: "noopener noreferrer",
                         svg {
                             "aria-hidden": "true",
                             class: "size-6",
@@ -56,7 +59,9 @@ pub fn Footer() -> Element {
                     a {
                         "aria-label": "LinkedIn Profile",
                         class: "text-text-dark/40 dark:text-gray-500 hover:text-primary-light transition-all hover:scale-110",
-                        href: "#",
+                        href: "{LINKEDIN_URL}",
+                        target: "_blank",
+                        rel: "noopener noreferrer",
                         svg {
                             "aria-hidden": "true",
                             class: "size-6",

@@ -1,9 +1,7 @@
-use crate::components::{
-    BlogCategories, BlogSearch, Card, Comment, Comments, Container, EntryHero, Hero, Section,
-    ShareButtons,
-};
-use crate::data::blog::{get_all_categories, get_all_posts, get_post_by_id};
-use crate::data::utils::{get_base_path, markdown_to_html};
+use crate::components::{Comment, Comments, ContentGallery, DetailHero, GalleryItem, ShareButtons};
+use crate::data::blog::{derive_categories, fetch_all_posts, get_post_by_id};
+use crate::data::constants::APP_TITLE;
+use crate::data::utils::markdown_to_html;
 use crate::hooks::use_syntax_highlighting;
 use crate::views::Footer;
 use crate::Route;
@@ -11,41 +9,40 @@ use dioxus::prelude::*;
 
 #[component]
 pub fn BlogList() -> Element {
-    let posts = get_all_posts();
+    let posts_resource = use_resource(fetch_all_posts);
 
-    rsx! {
-        Container {
-            main { class: "flex flex-col gap-12 mt-8 md:mt-16",
-                Hero {
-                    title: "From the Horizon",
-                    subtitle: "Exploring the frontiers of Rust, from bare-metal to the web. Find articles, tutorials, and deep dives here.",
-                }
+    let posts_guard = posts_resource.read();
 
-                // Filter / Search Section
-                section { class: "flex flex-col md:flex-row gap-4 px-4 items-center",
-                    BlogSearch { placeholder: "Search articles..." }
-                    BlogCategories {
-                        categories: get_all_categories(),
-                        active: "All".to_string(),
-                    }
-                }
+    match &*posts_guard {
+        Some(posts) => {
+            let blog_items = posts
+                .iter()
+                .map(|post| GalleryItem {
+                    id: post.id.clone(),
+                    title: post.title.clone(),
+                    description: post.description.clone(),
+                    image_url: post.image_url.clone(),
+                    tags: post.tags.clone(),
+                })
+                .collect();
 
-                Section { class: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8",
-                    for post in posts {
-                        Card {
-                            title: post.title.clone(),
-                            description: post.description.clone(),
-                            image_url: format!("{}/{}", get_base_path(), post.image_url),
-                            tags: post.tags.clone(),
-                            link_to: Route::BlogPost {
-                                id: post.id.clone(),
-                            },
-                        }
-                    }
+            rsx! {
+                ContentGallery {
+                    title: "The Journey's Log",
+                    subtitle: "Documenting every breakthrough and lesson learned while navigating the Rust ecosystem—from bare-metal firmware to cloud-native services.",
+                    search_placeholder: "Search articles...",
+                    items: blog_items,
+                    categories: derive_categories(posts),
+                    route_factory: |id| Route::BlogPost { id },
                 }
             }
         }
-        Footer {}
+        None => rsx! {
+            div { class: "flex flex-col items-center justify-center min-h-[60vh]",
+                div { class: "animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-light" }
+                p { class: "mt-4 text-text-dark/60 dark:text-text-light/60", "Loading index..." }
+            }
+        },
     }
 }
 
@@ -63,10 +60,10 @@ pub fn BlogPost(id: String) -> Element {
         Some(Some(post)) => {
             let html_content = markdown_to_html(&post.content, &post.meta.id, "posts");
             rsx! {
-                document::Title { "{post.meta.title} - Rust's Horizon" }
+                document::Title { "{post.meta.title} - {APP_TITLE}" }
                 div { class: "layout-content-container flex flex-col w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16",
                     article { class: "w-full max-w-3xl flex flex-col gap-10",
-                        EntryHero {
+                        DetailHero {
                             title: post.meta.title.clone(),
                             author: post.meta.author.clone(),
                             date: post.meta.date.clone(),
